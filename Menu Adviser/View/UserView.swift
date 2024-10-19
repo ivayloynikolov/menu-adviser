@@ -2,15 +2,14 @@
 //  UserView.swift
 //  Menu Adviser
 //
-//  Created by Ivailo Nikolov on 6.10.24.
+//  Created by Ivailo Nikolov on 19.10.24.
 //
 
 import SwiftUI
 
 struct UserView: View {
-    
     var body: some View {
-        Text("User View")
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
