@@ -7,24 +7,18 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
-    @State var selectedTab = 0
+    @Environment(\.modelContext) var modelContext
+    
+    @AppStorage("selectedTab") private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
-                .tag(0)
-                .tabItem {
-                    Image(systemName: "house")
-                        .resizable()
-                    Text("Home")
-                        .bold(true)
-            }
-          
             UserView()
                 .tag(1)
                 .tabItem {
-                    Image(systemName: "person.crop.circle.badge")
+                    Image(systemName: "person.crop.square")
                         .resizable()
                     Text("User")
             }
@@ -43,7 +37,14 @@ struct ContentView: View {
                     Image(systemName: "fork.knife")
                         .resizable()
                     Text("Menu")
-                        .bold()
+            }
+            
+            ProgressView()
+                .tag(0)
+                .tabItem {
+                    Image(systemName: "trophy.fill")
+                        .resizable()
+                    Text("Home")
             }
         }
     }
@@ -51,4 +52,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: UserModel.self, inMemory: true)
 }

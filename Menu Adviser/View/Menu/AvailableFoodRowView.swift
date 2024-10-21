@@ -8,11 +8,29 @@
 import SwiftUI
 
 struct AvailableFoodRowView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    @State private var isEnabled = true
+    
+    var food: String
+    
+    var body: some View {    
+        HStack {
+            Text(food)
+                .foregroundStyle(isEnabled ? .black : .secondary)
+            
+            Spacer()
+            
+            Button(action: {
+                isEnabled.toggle()
+            }, label: {
+                Image(systemName: isEnabled ? "checkmark" : "xmark")
+                    .foregroundStyle(isEnabled ? .green : .red)
+            })
+        }
+        .padding(EdgeInsets(top: 5.0, leading: 30.0, bottom: 5.0, trailing: 30.0))
+        .background(isEnabled ? .clear : .gray.opacity(0.1))
     }
 }
 
 #Preview {
-    AvailableFoodRowView()
+    AvailableFoodRowView(food: "Preview name")
 }

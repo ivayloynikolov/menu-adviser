@@ -6,10 +6,28 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct UserView: View {
+    @Query var users: [UserModel]
+    
+    @State var isEditUserActive: Bool = false
+    @State private var navigationPath = NavigationPath()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack(path: $navigationPath) {
+            VStack {
+                UserDataView(isEditUserActive: $isEditUserActive)
+            }
+            .navigationDestination(isPresented: $isEditUserActive) {
+                VStack {
+                    UserEditView(isEditUserActive: $isEditUserActive)
+                }
+            }
+        }
+        .task {
+            isEditUserActive = users.count == 0
+        }
     }
 }
 

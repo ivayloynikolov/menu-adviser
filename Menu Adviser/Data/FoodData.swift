@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+struct FoodData: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let isVegan: Bool
+    let isVegetarian: Bool
+}
+
+struct FoodDataArray: Codable {
+    let dataArray: [FoodData]
+}

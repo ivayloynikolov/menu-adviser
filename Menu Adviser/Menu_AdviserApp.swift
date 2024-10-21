@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct Menu_AdviserApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(for: [DishModel.self, UserModel.self, GoalsModel.self])
         }
     }
 }

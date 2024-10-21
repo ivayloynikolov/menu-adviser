@@ -6,13 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct GoalsView: View {
+    @Query var goals: [GoalsModel]
+    
+    @State var isEditGoalsActive: Bool = false
+    @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        Text("Goals View")
+        NavigationStack(path: $navigationPath) {
+            VStack {
+                GoalsDataView(isEditGoalsActive: $isEditGoalsActive)
+            }
+            .navigationDestination(isPresented: $isEditGoalsActive) {
+                VStack {
+                    GoalsEditView(isEditGoalsActive: $isEditGoalsActive)
+                }
+            }
+        }
+        .task {
+            isEditGoalsActive = goals.count == 0
+        }
     }
 }
+
 
 #Preview {
     GoalsView()
