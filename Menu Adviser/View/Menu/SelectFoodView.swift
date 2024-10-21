@@ -60,7 +60,7 @@ struct SelectFoodView: View {
     }
         
     func generateMenu() {
-        // TODO: replace with real api calls
+        // TODO: replace with a real api calls
         JSONDataController.shared.loadRecipeApiMockData { recipeDataArray in
             if let data = recipeDataArray {
                 data.dataArray.forEach { recipe in
