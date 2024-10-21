@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lounchScreenBg" translatesAutoresizingMaskIntoConstraints="NO" id="X1b-3D-pBN">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lounchScreenIcon" translatesAutoresizingMaskIntoConstraints="NO" id="WIi-Yg-2XN">
+                                <rect key="frame" x="72" y="193" width="249" height="245.66666666666663"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lounchScreenTitle" translatesAutoresizingMaskIntoConstraints="NO" id="WT1-8h-9cC">
+                                <rect key="frame" x="30" y="449" width="333" height="99"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="WIi-Yg-2XN" firstAttribute="bottom" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="D5X-gM-rbt"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="X1b-3D-pBN" secondAttribute="trailing" id="Ggv-IH-qYD"/>
+                            <constraint firstItem="WT1-8h-9cC" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="30" id="IwU-YS-NnK"/>
+                            <constraint firstAttribute="bottom" secondItem="X1b-3D-pBN" secondAttribute="bottom" id="KgW-S8-0QT"/>
+                            <constraint firstItem="WT1-8h-9cC" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="SDH-5H-Gsi"/>
+                            <constraint firstItem="WIi-Yg-2XN" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ZcH-ZM-7Ed"/>
+                            <constraint firstItem="WT1-8h-9cC" firstAttribute="centerY" secondItem="WIi-Yg-2XN" secondAttribute="bottom" constant="60" id="qgY-Jm-Ja1"/>
+                            <constraint firstItem="X1b-3D-pBN" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="svq-b6-1oW"/>
+                            <constraint firstAttribute="trailing" secondItem="WT1-8h-9cC" secondAttribute="trailing" constant="30" id="tVq-T8-z99"/>
+                            <constraint firstItem="X1b-3D-pBN" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="uKQ-rx-eWd"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="lounchScreenBg" width="540" height="960"/>
+        <image name="lounchScreenIcon" width="249" height="245.5"/>
+        <image name="lounchScreenTitle" width="410" height="99"/>
+    </resources>
+</document>
