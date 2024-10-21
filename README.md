@@ -14,26 +14,26 @@ Base schema of the used screens.
 
 The user view shows the entered user's data. The rest of the properties will be used to calculate the current BMI value.
 
-![User view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/01_UserView.png)
-![Edit user view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/02_EditUserView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/01_UserView.png" width="20%" alt="User view">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/02_EditUserView.png" width="20%" alt="Edit user view">
 
 The goals view shows the set goal (currently one of three options) and target weight. The rest of the properties are calculated based on scheduled goals, and some of the user's property values.
 
-![Goals view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/03_GoalsView.png)
-![Edit goals view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/04_EditGoalsView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/03_GoalsView.png" width="20%" alt="Goals view">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/04_EditGoalsView.png" width="20%" alt="Edit goals view">
 
 The generate menu view allows users to specify their meal preferences and generates the daily menu based on those preferences and current set goals.
 
-![Generate menu view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/05_GenerateMenuView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/05_GenerateMenuView.png" width="20%" alt="Generate menu view">
 
 The daily menu view shows the currently generated menu according to the provided parameters.
 
-![Daily menu view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/06_DailyMenuView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/06_DailyMenuView.png" width="20%" alt="Daily menu view">
 
 The meal details view shows ingredients, macros, and directions for preparing the selected meal.
 
-![Meal details view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/07_MealDetailsView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/07_MealDetailsView.png" width="20%" alt="Meal details view">
 
 The progress view will show the current phase of the goals, including details for every day of the challenge.
 
-![Progress view](https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/08_ProgressView.png)
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/08_ProgressView.png" width="20%" alt="Progress view">
