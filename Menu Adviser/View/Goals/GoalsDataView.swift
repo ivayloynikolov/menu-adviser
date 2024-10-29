@@ -12,6 +12,7 @@ struct GoalsDataView: View {
     @Environment(\.modelContext) var modelContext
     
     @Query var goals: [GoalsModel]
+    @Query var users: [UserModel]
     
     @Binding var isEditGoalsActive: Bool
     
@@ -27,7 +28,7 @@ struct GoalsDataView: View {
                             .frame(maxWidth: geometry.size.width * 0.5, alignment: .leading)
                             .padding(.top, 20)
                         
-                        Text(goals[0].goal)
+                        Text(goals[0].targetGoal)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -44,20 +45,32 @@ struct GoalsDataView: View {
                     .padding(.top, 5)
                     
                     HStack {
-                        Text("Target Calories")
+                        Text("Current Daily Calories")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text("\(users[0].currentDailyCalories)")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .padding(.top, 40)
+                    
+                    HStack {
+                        Text("Target Daily Calories")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
                         Text("\(goals[0].targetCalories)")
-                            .frame(maxWidth: .infinity)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 40)
+                    .padding(.top, 5)
                     
                     HStack {
                         Text("Target BMI")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].targetBMI))
-                            .frame(maxWidth: .infinity)
+                        Text(String(format: "%.2f", goals[0].targetBmi))
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .padding(.top, 5)
                     
@@ -65,8 +78,9 @@ struct GoalsDataView: View {
                         Text("Estimated Days")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].estimatedDays))
-                            .frame(maxWidth: .infinity)
+                        Text("\(goals[0].estimatedDays)")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .padding(.top, 5)
                     
@@ -130,5 +144,5 @@ struct GoalsDataView: View {
 #Preview {
     @Previewable @State var value: Bool = true
     GoalsDataView(isEditGoalsActive: $value)
-        .modelContainer(for: GoalsModel.self, inMemory: true)
+        .modelContainer(for: [GoalsModel.self, UserModel.self], inMemory: true)
 }

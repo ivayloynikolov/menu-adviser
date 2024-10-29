@@ -86,7 +86,7 @@ struct UserDataView: View {
                         Text("Current BMI")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", users[0].bmi))
+                        Text(String(format: "%.2f", users[0].currentBmi))
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
