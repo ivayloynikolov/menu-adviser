@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B044205D2CD3ECFD00F6A9F9 /* ApplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B044205C2CD3ECFD00F6A9F9 /* ApplicationData.swift */; };
 		B0547D902CC3C60D005AFFFD /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */; };
 		B0547D932CC3E2C3005AFFFD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0547D922CC3E2C3005AFFFD /* UserView.swift */; };
 		B082D1DD2CB2DD670014F4C9 /* Menu_AdviserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B082D1DC2CB2DD670014F4C9 /* Menu_AdviserApp.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B044205C2CD3ECFD00F6A9F9 /* ApplicationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationData.swift; sourceTree = "<group>"; };
 		B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
 		B0547D922CC3E2C3005AFFFD /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		B082D1D92CB2DD670014F4C9 /* Menu Adviser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Menu Adviser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -173,6 +175,7 @@
 				B082D2232CBACBCE0014F4C9 /* recipeApiMock.json */,
 				B082D21F2CBAC2400014F4C9 /* FoodData.swift */,
 				B082D2252CBACC080014F4C9 /* RecipeData.swift */,
+				B044205C2CD3ECFD00F6A9F9 /* ApplicationData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				B082D2112CBA73C60014F4C9 /* GeneratedMenuView.swift in Sources */,
 				B082D1ED2CB2DDC90014F4C9 /* ProgressView.swift in Sources */,
 				B0E4BFB62CC553C7002F87E8 /* GoalsModel.swift in Sources */,
+				B044205D2CD3ECFD00F6A9F9 /* ApplicationData.swift in Sources */,
 				B0E4BFB42CC5528A002F87E8 /* GoalsEditView.swift in Sources */,
 				B082D2132CBAA7EE0014F4C9 /* SelectFoodView.swift in Sources */,
 				B082D2202CBAC2400014F4C9 /* FoodData.swift in Sources */,

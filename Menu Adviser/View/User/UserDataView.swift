@@ -22,25 +22,13 @@ struct UserDataView: View {
                     .font(.title)
                 
                 if users.count > 0 {
-                    HStack {
-                        Text("Name")
-                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
-                        
-                        Text(users[0].name)
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                    .padding(.top, 20)
+                    Text(users[0].name)
+                        .bold()
+                        .font(.title)
+                        .padding(.top, 20)
                 
-                    HStack {
-                        Text("Age")
-                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
-                        
-                        Text("\(users[0].age)")
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                    .padding(.top, 5)
+                    Text("(\(users[0].age) years)")
+                        .font(.footnote)
                     
                     HStack {
                         Text("Sex")
@@ -50,7 +38,7 @@ struct UserDataView: View {
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    .padding(.top, 10)
                     
                     HStack {
                         Text("Weight (kg.)")
@@ -100,11 +88,10 @@ struct UserDataView: View {
                         Text("Edit User")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                     .padding(.top, 30)
-                    .padding(.bottom, 5)
                     
                     Button(action: {
                         do {
@@ -117,11 +104,10 @@ struct UserDataView: View {
                         Text("Delete User")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                    .padding(.top, 5)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
                 } else {
                     Text("Please add user data")
                         .frame(maxWidth: .infinity)
@@ -135,14 +121,13 @@ struct UserDataView: View {
                         Text("Add User")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                     .padding(.top, 30)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
                 }
             }
-            .padding(.top, 20)
         }
         .padding(.horizontal, 30)
     }

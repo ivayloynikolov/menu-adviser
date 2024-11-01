@@ -24,65 +24,102 @@ struct GoalsDataView: View {
                 
                 if goals.count > 0 {
                     HStack {
-                        Text("Goal")
-                            .frame(maxWidth: geometry.size.width * 0.5, alignment: .leading)
-                            .padding(.top, 20)
-                        
                         Text(goals[0].targetGoal)
                             .bold()
-                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .font(.title)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 5)
+                    
+                    Text("Weight (kg.)")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Target Weight (kg.)")
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", users[0].weight))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    HStack {
+                        Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
                         Text(String(format: "%.2f", goals[0].targetWeight))
-                            .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    Text("Daily Calories")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Current Daily Calories")
+                        Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
                         Text("\(users[0].currentDailyCalories)")
-                            .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 40)
                     
                     HStack {
-                        Text("Target Daily Calories")
+                        Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
                         Text("\(goals[0].targetCalories)")
-                            .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    Text("BMI")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Target BMI")
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", users[0].currentBmi))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    HStack {
+                        Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
                         Text(String(format: "%.2f", goals[0].targetBmi))
-                            .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    Text("Physical Activity")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Estimated Days")
+                        Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text("\(goals[0].estimatedDays)")
-                            .bold()
+                        Text(users[0].activity)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    HStack {
+                        Text("Target")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(goals[0].targetActivity)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    Text("Estimated Goals Achievement Days")
+                        .bold()
+                        .padding(.top, 40)
+                    
+                    Text("\(goals[0].estimatedDays)")
+                        .font(.title2)
+                        .bold()
+                        .foregroundStyle(.green)
+                        .padding(.top, 5)
                     
                     Spacer()
                     
@@ -92,11 +129,10 @@ struct GoalsDataView: View {
                         Text("Edit Goals")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                     .padding(.top, 30)
-                    .padding(.bottom, 5)
                     
                     Button(action: {
                         do {
@@ -109,11 +145,10 @@ struct GoalsDataView: View {
                         Text("Delete Goals")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                    .padding(.top, 5)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
                 } else {
                     Text("Please add goals data")
                         .frame(maxWidth: .infinity)
@@ -134,8 +169,6 @@ struct GoalsDataView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .padding(.top, 20)
-//            .frame(maxHeight: .infinity, alignment: .top)
         }
         .padding(.horizontal, 30)
     }

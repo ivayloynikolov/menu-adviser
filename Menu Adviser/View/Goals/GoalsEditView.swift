@@ -75,8 +75,9 @@ struct GoalsEditView: View {
                     .font(.title)
                 
                 Text("Goal")
+                    .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
+                    .padding(.top, 5)
                 
                 Picker("", selection: $targetGoal) {
                     Text(GoalOptions.weightLoss.rawValue).tag(GoalOptions.weightLoss)
@@ -92,8 +93,9 @@ struct GoalsEditView: View {
                 }
                 
                 Text("Target Activity")
+                    .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
+                    .padding(.top, 15)
                 
                 Picker("", selection: $targetActivity) {
                     Text(ActivityOptions.low.rawValue).tag(ActivityOptions.low)
@@ -109,6 +111,7 @@ struct GoalsEditView: View {
                 
                 HStack {
                     Text("Target Weight (kg.)")
+                        .bold()
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
                     TextField("", value: $targetWeight, formatter: NumberFormatter())
@@ -123,38 +126,52 @@ struct GoalsEditView: View {
                             updateEstimatedDays()
                         }
                 }
-                .padding(.top, 20)
+                .padding(.top, 15)
+                
+                Text("Daily Calories")
+                    .padding(.top, 10)
+                    .bold()
                 
                 HStack {
-                    Text("Current Daily Calories")
+                    Text("Current")
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
                     Text("\(!users.isEmpty ? users[0].currentDailyCalories : 0)")
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding(.top, 40)
                 
                 HStack {
-                    Text("Target Daily Calories")
+                    Text("Target")
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
                     Text("\(targetCalories)")
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding(.top, 5)
+                
+                Text("BMI")
+                    .padding(.top, 10)
+                    .bold()
                 
                 HStack {
-                    Text("Target BMI")
+                    Text("Current")
+                        .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", users[0].currentBmi))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                HStack {
+                    Text("Target")
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
                     Text(String(format: "%.2f", targetBmi))
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding(.top, 5)
                 
                 Text("Progress Pace")
+                    .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
+                    .padding(.top, 15)
                 
                 Picker("", selection: $progressPace) {
                     Text(PaceOptions.slow.rawValue).tag(PaceOptions.slow)
@@ -171,12 +188,13 @@ struct GoalsEditView: View {
                 
                 HStack {
                     Text("Estimated Days")
+                        .bold()
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
                     Text("\(estimatedDays)")
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding(.top, 5)
+                .padding(.top, 15)
                 
                 Spacer()
                 
@@ -190,8 +208,6 @@ struct GoalsEditView: View {
                             goal.targetBmi = targetBmi
                             goal.estimatedDays = estimatedDays
                             goal.progressPace = progressPace.rawValue
-                            
-//                            modelContext.insert(goal)
                         } else {
                             let newGoal = GoalsModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
                             
@@ -206,17 +222,15 @@ struct GoalsEditView: View {
                     Text("Save")
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 20.0)
+                        .padding(.vertical, 15.0)
                 })
                 .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                 .padding(.top, 30)
-                .padding(.bottom, 20)
+                .padding(.bottom, 10)
                 .alert("Please fill all of the fields", isPresented: $isAlertPresented) {
                             Button("OK", role: .cancel) { }
                         }
             }
-            .padding(.top, 10)
-//            .frame(maxHeight: .infinity, alignment: .top)
         }
         .padding(.horizontal, 30)
         .task {

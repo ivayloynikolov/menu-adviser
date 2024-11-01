@@ -1,5 +1,5 @@
 //
-//  AppSettings.swift
+//  ApplicationData.swift
 //  Menu Adviser
 //
 //  Created by Ivailo Nikolov on 24.10.24.
