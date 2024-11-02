@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B044205D2CD3ECFD00F6A9F9 /* ApplicationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B044205C2CD3ECFD00F6A9F9 /* ApplicationData.swift */; };
+		B04420622CD53CC700F6A9F9 /* DayBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04420612CD53CC700F6A9F9 /* DayBadgeView.swift */; };
+		B04420642CD67C3800F6A9F9 /* DayDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04420632CD67C3800F6A9F9 /* DayDetailsView.swift */; };
 		B0547D902CC3C60D005AFFFD /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */; };
 		B0547D932CC3E2C3005AFFFD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0547D922CC3E2C3005AFFFD /* UserView.swift */; };
 		B082D1DD2CB2DD670014F4C9 /* Menu_AdviserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B082D1DC2CB2DD670014F4C9 /* Menu_AdviserApp.swift */; };
@@ -37,6 +39,8 @@
 
 /* Begin PBXFileReference section */
 		B044205C2CD3ECFD00F6A9F9 /* ApplicationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationData.swift; sourceTree = "<group>"; };
+		B04420612CD53CC700F6A9F9 /* DayBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBadgeView.swift; sourceTree = "<group>"; };
+		B04420632CD67C3800F6A9F9 /* DayDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailsView.swift; sourceTree = "<group>"; };
 		B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
 		B0547D922CC3E2C3005AFFFD /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		B082D1D92CB2DD670014F4C9 /* Menu Adviser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Menu Adviser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +80,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B044205E2CD53C1100F6A9F9 /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				B04420612CD53CC700F6A9F9 /* DayBadgeView.swift */,
+				B04420632CD67C3800F6A9F9 /* DayDetailsView.swift */,
+			);
+			path = Progress;
+			sourceTree = "<group>";
+		};
 		B0547D912CC3C682005AFFFD /* User */ = {
 			isa = PBXGroup;
 			children = (
@@ -128,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				B082D1DE2CB2DD670014F4C9 /* ContentView.swift */,
+				B044205E2CD53C1100F6A9F9 /* Progress */,
 				B0E4BFB02CC54AC7002F87E8 /* Goals */,
 				B0547D912CC3C682005AFFFD /* User */,
 				B082D20F2CBA72E00014F4C9 /* Menu */,
@@ -275,6 +289,8 @@
 				B0E4BFB22CC551FF002F87E8 /* GoalsDataView.swift in Sources */,
 				B082D1F12CB2DE3C0014F4C9 /* GoalsView.swift in Sources */,
 				B082D2222CBAC5F10014F4C9 /* AvailableFoodRowView.swift in Sources */,
+				B04420622CD53CC700F6A9F9 /* DayBadgeView.swift in Sources */,
+				B04420642CD67C3800F6A9F9 /* DayDetailsView.swift in Sources */,
 				B082D2262CBACC080014F4C9 /* RecipeData.swift in Sources */,
 				B0A7395C2CC0007E00DBA213 /* UserModel.swift in Sources */,
 				B082D1DF2CB2DD670014F4C9 /* ContentView.swift in Sources */,
@@ -425,6 +441,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +472,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
