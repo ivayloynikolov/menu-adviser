@@ -6,42 +6,60 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DayDetailsView: View {
+    
+    @Query private var goals: [GoalsModel]
+    @Query private var users: [UserModel]
     
     let currentDay: Int
     
     var body: some View {
-        VStack {
-            Text("Current day - \(currentDay)")
-            
-            Text("Estimated daily calories for day - \(currentDay)")
-            
-            Text("Estimated weight \(String(format: "%.2f", 0)) kg.")
-                .padding(.top, 5)
-            
-            Text("Estimated BMI \(String(format: "%.2f", 0))")
-                .padding(.top, 5)
-            
-            Text("Graphical representation of the values")
-                .padding(.top, 15)
-            
-            Text("Daily menu for day - \(currentDay)")
-            
-            Spacer()
-            
-            Button(action: {
-                print("generate daily menu")
-            }, label: {
-                Text("Generate Daily Menu")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15.0)
-            })
-            .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-            .padding(.bottom, 10)
+        GeometryReader { geometry in
+            if !users.isEmpty && !goals.isEmpty {
+                VStack {
+                    HStack {
+                        Spacer()
+                        
+                        HStack {
+                            Text("initial")
+                                .font(.caption)
+                                .frame(alignment: .leading)
+                            
+                            Spacer()
+                            
+                            Text("current")
+                                .font(.caption)
+                                .frame(alignment: .center)
+                            
+                            Spacer()
+                            
+                            Text("target")
+                                .font(.caption)
+                                .frame(alignment: .trailing)
+                        }
+                        .frame(width: ((geometry.size.width - 60) * 0.8), height: 15.0)
+                    }
+                    
+                    ProgressBarView(title: "weight", initialValue: users.first!.weight, targetValue: goals.first!.targetWeight, estimatedDays: goals.first!.estimatedDays, currentDay: currentDay)
+                    
+                    ProgressBarView(title: "bmi", initialValue: users.first!.currentBmi, targetValue: goals.first!.targetBmi, estimatedDays: goals.first!.estimatedDays, currentDay: currentDay)
+                    
+                    Text("Daily menu")
+                        .bold()
+                        .font(.title)
+                        .frame(alignment: .center)
+                        .padding(.top, 30)
+                    
+                    DailyMenuView(currentDay: currentDay)
+                        .frame(height: geometry.size.height * 0.6, alignment: .bottom)
+                }
+                .padding(.horizontal, 30)
+            } else {
+                Text("Setup user and goals first!")
+            }
         }
-        .padding(.horizontal)
     }
 }
 

@@ -150,8 +150,6 @@ struct UserEditView: View {
                             user.weight = weight
                             user.height = height
                             user.activity = activity.rawValue
-                            
-//                            modelContext.insert(user)
                         } else {
                             let newUser = UserModel(name: name, age: age, sex: sex.rawValue, weight: weight, height: height, activity: activity.rawValue)
 
@@ -186,13 +184,13 @@ struct UserEditView: View {
         .padding(.horizontal, 30)
         .task {
             if users.count > 0 {
-                name = users[0].name
-                age = users[0].age
-                sex = SexOptions(rawValue: users[0].sex) ?? .undefined
-                weight = users[0].weight
-                height = users[0].height
-                activity = ActivityOptions(rawValue: users[0].activity) ?? .undefined
-                currentBmi = users[0].currentBmi
+                name = users.first!.name
+                age = users.first!.age
+                sex = SexOptions(rawValue: users.first!.sex) ?? .undefined
+                weight = users.first!.weight
+                height = users.first!.height
+                activity = ActivityOptions(rawValue: users.first!.activity) ?? .undefined
+                currentBmi = users.first!.currentBmi
             }
         }
     }

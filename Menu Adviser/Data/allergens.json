@@ -1,0 +1,46 @@
+{
+    "allergens": [
+        {
+            "id": 0,
+            "name": "Milk",
+            "isSelected": true
+        },
+        {
+            "id": 1,
+            "name": "Lactose",
+            "isSelected": true
+        },{
+            "id": 2,
+            "name": "Egg",
+            "isSelected": true
+        },{
+            "id": 3,
+            "name": "Fish",
+            "isSelected": true
+        },{
+            "id": 4,
+            "name": "Gluten",
+            "isSelected": true
+        },{
+            "id": 5,
+            "name": "Nuts",
+            "isSelected": true
+        },{
+            "id": 6,
+            "name": "Peanuts",
+            "isSelected": true
+        },{
+            "id": 7,
+            "name": "Shellfish",
+            "isSelected": true
+        },{
+            "id": 8,
+            "name": "Soy",
+            "isSelected": true
+        },{
+            "id": 9,
+            "name": "Sesame",
+            "isSelected": true
+        }
+    ]
+}

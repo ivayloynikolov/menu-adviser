@@ -24,7 +24,7 @@ struct GoalsDataView: View {
                 
                 if goals.count > 0 {
                     HStack {
-                        Text(goals[0].targetGoal)
+                        Text(goals.first!.targetGoal)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .center)
                             .font(.title)
@@ -39,7 +39,7 @@ struct GoalsDataView: View {
                         Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", users[0].weight))
+                        Text(String(format: "%.2f", users.first!.weight))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -47,7 +47,7 @@ struct GoalsDataView: View {
                         Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].targetWeight))
+                        Text(String(format: "%.2f", goals.first!.targetWeight))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -59,7 +59,7 @@ struct GoalsDataView: View {
                         Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text("\(users[0].currentDailyCalories)")
+                        Text("\(users.first!.currentDailyCalories)")
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -67,7 +67,7 @@ struct GoalsDataView: View {
                         Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text("\(goals[0].targetCalories)")
+                        Text("\(goals.first!.targetCalories)")
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -79,7 +79,7 @@ struct GoalsDataView: View {
                         Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", users[0].currentBmi))
+                        Text(String(format: "%.2f", users.first!.currentBmi))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -87,7 +87,7 @@ struct GoalsDataView: View {
                         Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].targetBmi))
+                        Text(String(format: "%.2f", goals.first!.targetBmi))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -99,7 +99,7 @@ struct GoalsDataView: View {
                         Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(users[0].activity)
+                        Text(users.first!.activity)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -107,7 +107,7 @@ struct GoalsDataView: View {
                         Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(goals[0].targetActivity)
+                        Text(goals.first!.targetActivity)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     
@@ -115,7 +115,7 @@ struct GoalsDataView: View {
                         .bold()
                         .padding(.top, 40)
                     
-                    Text("\(goals[0].estimatedDays)")
+                    Text("\(goals.first!.estimatedDays)")
                         .font(.title2)
                         .bold()
                         .foregroundStyle(.green)
@@ -137,6 +137,7 @@ struct GoalsDataView: View {
                     Button(action: {
                         do {
                             try modelContext.delete(model: GoalsModel.self)
+                            try modelContext.delete(model: DailyMenuModel.self)
                             try modelContext.save()
                         } catch {
                             print(error)
@@ -151,8 +152,8 @@ struct GoalsDataView: View {
                     .padding(.bottom, 10)
                 } else {
                     Text("Please add goals data")
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 20)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .bold()
                     
                     Spacer()
                     

@@ -22,19 +22,19 @@ struct UserDataView: View {
                     .font(.title)
                 
                 if users.count > 0 {
-                    Text(users[0].name)
+                    Text(users.first!.name)
                         .bold()
                         .font(.title)
                         .padding(.top, 20)
                 
-                    Text("(\(users[0].age) years)")
+                    Text("(\(users.first!.age) years)")
                         .font(.footnote)
                     
                     HStack {
                         Text("Sex")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(users[0].sex)
+                        Text(users.first!.sex)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -44,7 +44,7 @@ struct UserDataView: View {
                         Text("Weight (kg.)")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", users[0].weight))
+                        Text(String(format: "%.2f", users.first!.weight))
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -54,7 +54,7 @@ struct UserDataView: View {
                         Text("Height (cm.)")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text("\(users[0].height)")
+                        Text("\(users.first!.height)")
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -64,7 +64,7 @@ struct UserDataView: View {
                         Text("Activity")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(users[0].activity)
+                        Text(users.first!.activity)
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -74,7 +74,7 @@ struct UserDataView: View {
                         Text("Current BMI")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", users[0].currentBmi))
+                        Text(String(format: "%.2f", users.first!.currentBmi))
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
@@ -110,8 +110,8 @@ struct UserDataView: View {
                     .padding(.bottom, 10)
                 } else {
                     Text("Please add user data")
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 20)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .bold()
                     
                     Spacer()
                     

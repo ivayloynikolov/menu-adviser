@@ -35,6 +35,9 @@ struct DayBadgeView: View {
                 Text("\(dayId)")
                     .bold()
                     .font(.largeTitle)
+                
+                // TODO: display real daily calories
+                Text("\(1850) cal.")
             }
         }
         .frame(width: frameWidth , height: 150)

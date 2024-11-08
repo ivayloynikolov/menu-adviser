@@ -12,38 +12,52 @@ class JSONDataController {
     
     private init() {}
     
-    // availableFoodData.json describes specific foods that cen be excluded from the resulting recipes when the menu is generated
-    // TODO: complete the list with all supported items
-    func loadAvailableFoodData(completion: (FoodDataArray?) -> Void) {
-        if let url = Bundle.main.url(forResource: "availableFoodData", withExtension: "json") {
+    func loadAllergens(completion: (AllergensList?) -> Void) {
+        if let url = Bundle.main.url(forResource: "allergens", withExtension: "json") {
             do {
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
-                let jsonData = try decoder.decode(FoodDataArray.self, from: data)
+                let jsonData = try decoder.decode(AllergensList.self, from: data)
                 
                 completion(jsonData)
             } catch {
                 print("error:\(error)")
+                completion(nil)
             }
+        } else {
+            completion(nil)
         }
-        
-        completion(nil)
     }
     
-    // recipeApiMock.json contains a response structure of the actual API, which will be used in the production
-    func loadRecipeApiMockData(completion: (recipeDataArray?) -> Void) {
-        if let url = Bundle.main.url(forResource: "recipeApiMock", withExtension: "json") {
+//    func saveAllergens(allergens: AllergensList, completion: (Bool) -> Void) {
+//        if let url = Bundle.main.url(forResource: "allergens", withExtension: "json") {
+//            do {
+//                let data = try JSONEncoder().encode(allergens)
+//                try data.write(to: url)
+//                
+//                completion(true)
+//            } catch {
+//                print("error:\(error)")
+//                completion(false)
+//            }
+//        } else {
+//            completion(false)
+//        }
+//    }
+    
+    func getMockRecipe(recipeRequestData: RecipeRequestData, completion: (RecipeResponseData?) -> Void) {
+        if let url = Bundle.main.url(forResource: recipeRequestData.recipeTypes, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
-                let jsonData = try decoder.decode(recipeDataArray.self, from: data)
+                let jsonData = try decoder.decode(RecipesData.self, from: data)
                 
-                completion(jsonData)
+                completion(jsonData.recipes.isEmpty ? nil : jsonData.recipes.randomElement())
             } catch {
                 print("error:\(error)")
             }
+        } else {
+            completion(nil)
         }
-        
-        completion(nil)
     }
 }
