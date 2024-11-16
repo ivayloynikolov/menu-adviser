@@ -8,18 +8,12 @@
 import SwiftUI
 import SwiftData
 
-enum SexOptions: String {
-    case male, female, undefined
-}
 
-enum ActivityOptions: String {
-    case low, moderate, high, undefined
-}
 
 struct UserEditView: View {
     @Environment(\.modelContext) var modelContext
     
-    @Query var users: [UserModel]
+    @Query private var users: [UserModel]
     
     @Binding var isEditUserActive: Bool
     
@@ -30,6 +24,24 @@ struct UserEditView: View {
     @State private var height: Int = 0
     @State private var activity: ActivityOptions = .undefined
     @State private var currentBmi: Float = 0.0
+    
+    @State private var isAlertPresented = false
+    
+    func isInputDataValid() -> Bool {
+        var isValid = false
+        
+        if name != "" &&
+            age > 0 &&
+            sex != SexOptions.undefined &&
+            weight > 0 &&
+            height > 0 &&
+            activity != ActivityOptions.undefined &&
+            currentBmi > 0 {
+            isValid = true
+        }
+        
+        return isValid
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -83,6 +95,9 @@ struct UserEditView: View {
                         .frame(maxWidth: .infinity, minHeight: 30.0)
                         .padding(.horizontal, 5)
                         .background(Color.gray.opacity(0.2))
+                        .onChange(of: weight) {
+                            currentBmi = AppData.shared.calculateBmi(weight: weight, height: height)
+                        }
                 }
                 .padding(.top, 20)
                 
@@ -96,6 +111,9 @@ struct UserEditView: View {
                         .frame(maxWidth: .infinity, minHeight: 30.0)
                         .padding(.horizontal, 5)
                         .background(Color.gray.opacity(0.2))
+                        .onChange(of: height) {
+                            currentBmi = AppData.shared.calculateBmi(weight: weight, height: height)
+                        }
                 }
                 
                 Text("Activity")
@@ -115,31 +133,39 @@ struct UserEditView: View {
                     Text("Current BMI")
                         .frame(width: geometry.size.width * 0.5, alignment: .leading)
                     
-                    // TODO: calculate BMI using the rest of the data
                     Text(String(format: "%.2f", currentBmi))
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .foregroundStyle(currentBmi == 0 ? .red : .primary)
                 }
                 .padding(.top, 40)
                 
                 Spacer()
                 
                 Button(action: {
-                    // TODO: check if all properties are valid
-                    if users.count > 0 {
-                        users[0].name = name
-                        users[0].age = age
-                        users[0].sex = sex.rawValue
-                        users[0].weight = weight
-                        users[0].height = height
-                        users[0].activity = activity.rawValue
-                        users[0].bmi = currentBmi
-                    } else {
-                        let user = UserModel(name: name, age: age, sex: sex.rawValue, weight: weight, height: height, activity: activity.rawValue, bmi: currentBmi)
+                    if isInputDataValid()  {
+                        if let user = users.first {
+                            user.name = name
+                            user.age = age
+                            user.sex = sex.rawValue
+                            user.weight = weight
+                            user.height = height
+                            user.activity = activity.rawValue
+                        } else {
+                            let newUser = UserModel(name: name, age: age, sex: sex.rawValue, weight: weight, height: height, activity: activity.rawValue)
+
+                            modelContext.insert(newUser)
+                        }
                         
-                        modelContext.insert(user)
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print(error)
+                        }
+                        
+                        isEditUserActive = false
+                    } else {
+                        isAlertPresented = true
                     }
-                    
-                    isEditUserActive = false
                 }, label: {
                     Text("Save")
                         .foregroundStyle(.white)
@@ -149,19 +175,22 @@ struct UserEditView: View {
                 .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                 .padding(.top, 30)
                 .padding(.bottom, 20)
+                .alert("Please fill all of the fields", isPresented: $isAlertPresented) {
+                            Button("OK", role: .cancel) { }
+                        }
             }
             .padding(.top, 10)
         }
         .padding(.horizontal, 30)
         .task {
             if users.count > 0 {
-                name = users[0].name
-                age = users[0].age
-                sex = SexOptions(rawValue: users[0].sex) ?? .undefined
-                weight = users[0].weight
-                height = users[0].height
-                activity = ActivityOptions(rawValue: users[0].activity) ?? .undefined
-                currentBmi = users[0].bmi
+                name = users.first!.name
+                age = users.first!.age
+                sex = SexOptions(rawValue: users.first!.sex) ?? .undefined
+                weight = users.first!.weight
+                height = users.first!.height
+                activity = ActivityOptions(rawValue: users.first!.activity) ?? .undefined
+                currentBmi = users.first!.currentBmi
             }
         }
     }

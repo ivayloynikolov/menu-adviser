@@ -12,6 +12,7 @@ struct GoalsDataView: View {
     @Environment(\.modelContext) var modelContext
     
     @Query var goals: [GoalsModel]
+    @Query var users: [UserModel]
     
     @Binding var isEditGoalsActive: Bool
     
@@ -23,52 +24,102 @@ struct GoalsDataView: View {
                 
                 if goals.count > 0 {
                     HStack {
-                        Text("Goal")
-                            .frame(maxWidth: geometry.size.width * 0.5, alignment: .leading)
-                            .padding(.top, 20)
-                        
-                        Text(goals[0].goal)
+                        Text(goals.first!.targetGoal)
                             .bold()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .font(.title)
+                    }
+                    .padding(.top, 5)
+                    
+                    Text("Weight (kg.)")
+                        .padding(.top, 10)
+                        .bold()
+                    
+                    HStack {
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", users.first!.weight))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 20)
                     
                     HStack {
-                        Text("Target Weight (kg.)")
+                        Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].targetWeight))
-                            .bold()
+                        Text(String(format: "%.2f", goals.first!.targetWeight))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    Text("Daily Calories")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Target Calories")
+                        Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text("\(goals[0].targetCalories)")
-                            .frame(maxWidth: .infinity)
+                        Text("\(users.first!.currentDailyCalories)")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 40)
                     
                     HStack {
-                        Text("Target BMI")
+                        Text("Target")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].targetBMI))
-                            .frame(maxWidth: .infinity)
+                        Text("\(goals.first!.targetCalories)")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    Text("BMI")
+                        .padding(.top, 10)
+                        .bold()
                     
                     HStack {
-                        Text("Estimated Days")
+                        Text("Current")
                             .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         
-                        Text(String(format: "%.2f", goals[0].estimatedDays))
-                            .frame(maxWidth: .infinity)
+                        Text(String(format: "%.2f", users.first!.currentBmi))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .padding(.top, 5)
+                    
+                    HStack {
+                        Text("Target")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", goals.first!.targetBmi))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    Text("Physical Activity")
+                        .padding(.top, 10)
+                        .bold()
+                    
+                    HStack {
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(users.first!.activity)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    HStack {
+                        Text("Target")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(goals.first!.targetActivity)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    Text("Estimated Goals Achievement Days")
+                        .bold()
+                        .padding(.top, 40)
+                    
+                    Text("\(goals.first!.estimatedDays)")
+                        .font(.title2)
+                        .bold()
+                        .foregroundStyle(.green)
+                        .padding(.top, 5)
                     
                     Spacer()
                     
@@ -78,15 +129,15 @@ struct GoalsDataView: View {
                         Text("Edit Goals")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                     .padding(.top, 30)
-                    .padding(.bottom, 5)
                     
                     Button(action: {
                         do {
                             try modelContext.delete(model: GoalsModel.self)
+                            try modelContext.delete(model: DailyMenuModel.self)
                             try modelContext.save()
                         } catch {
                             print(error)
@@ -95,15 +146,14 @@ struct GoalsDataView: View {
                         Text("Delete Goals")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
+                            .padding(.vertical, 15.0)
                     })
                     .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                    .padding(.top, 5)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 10)
                 } else {
                     Text("Please add goals data")
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 20)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .bold()
                     
                     Spacer()
                     
@@ -120,8 +170,6 @@ struct GoalsDataView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .padding(.top, 20)
-//            .frame(maxHeight: .infinity, alignment: .top)
         }
         .padding(.horizontal, 30)
     }
@@ -130,5 +178,5 @@ struct GoalsDataView: View {
 #Preview {
     @Previewable @State var value: Bool = true
     GoalsDataView(isEditGoalsActive: $value)
-        .modelContainer(for: GoalsModel.self, inMemory: true)
+        .modelContainer(for: [GoalsModel.self, UserModel.self], inMemory: true)
 }

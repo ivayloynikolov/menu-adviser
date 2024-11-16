@@ -7,19 +7,56 @@
 
 import Foundation
 
-struct RecipeData: Codable {
-    let name: String
-    let details: String
-    let type: String
-    let image: String
-    let yields: [String]
-    let ingredients: [String]
-    let directions: [String]
-    let macros: [String : Float]
-    let calories: Int
-    let servingSize: String
+
+class RecipeDailyMenuData: Codable {
+    var breakfast: RecipeResponseData?
+    var lunch: RecipeResponseData?
+    var snack: RecipeResponseData?
+    var dinner: RecipeResponseData?
+    
+    var isComplete: Bool {
+        if breakfast != nil && lunch != nil && snack != nil && dinner != nil {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    init() {}
 }
 
-struct recipeDataArray: Codable {
-    let dataArray: [RecipeData]
+struct RecipeRequestData: Codable {
+    let recipeId: String?
+    let recipeTypes: String?
+    let caloriesFrom: Int?
+    let caloriesTo: Int?
+    let carbPercentageFrom: Int?
+    let carbPercentageTo: Int?
+    let fatPercentageFrom: Int?
+    let fatPercentageTo: Int?
+    let proteinPercentageFrom: Int?
+    let proteinPercentageTo: Int?
+}
+
+struct RecipeResponseData: Codable {
+    let recipeId: String
+    let recipeName: String
+    let recipeDescription: String
+    let recipeImage: String
+    let recipeIngredients: [String]
+    let recipeNutrition: RecipeNutrition
+    let recipeType: [String]
+    let directions: [String]
+    let preparationTimeMin: String
+}
+
+struct RecipeNutrition: Codable {
+    let calories: Int
+    let fat: Float
+    let carb: Float
+    let protein: Float
+}
+
+struct RecipesData: Codable {
+    let recipes: [RecipeResponseData]
 }

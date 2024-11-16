@@ -9,14 +9,15 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @Environment(\.modelContext) var modelContext
     
     @AppStorage("selectedTab") private var selectedTab = 0
+    
+    @State private var selectedRecipe = SelectedRecipe()
     
     var body: some View {
         TabView(selection: $selectedTab) {
             UserView()
-                .tag(1)
+                .tag(0)
                 .tabItem {
                     Image(systemName: "person.crop.square")
                         .resizable()
@@ -24,7 +25,7 @@ struct ContentView: View {
             }
             
             GoalsView()
-                .tag(2)
+                .tag(1)
                 .tabItem {
                     Image(systemName: "pencil.and.list.clipboard.rtl")
                         .resizable()
@@ -32,7 +33,7 @@ struct ContentView: View {
             }
         
             MenuView()
-                .tag(3)
+                .tag(2)
                 .tabItem {
                     Image(systemName: "fork.knife")
                         .resizable()
@@ -40,7 +41,8 @@ struct ContentView: View {
             }
             
             ProgressView()
-                .tag(0)
+                .environment(\.selectedRecipe, selectedRecipe)
+                .tag(3)
                 .tabItem {
                     Image(systemName: "trophy.fill")
                         .resizable()
@@ -52,5 +54,8 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: UserModel.self, inMemory: true)
+}
+
+extension EnvironmentValues {
+    @Entry var selectedRecipe: SelectedRecipe = SelectedRecipe()
 }

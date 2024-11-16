@@ -8,126 +8,246 @@
 import SwiftUI
 import SwiftData
 
-enum GoalOptions: String {
-    case weightLoss = "weight loss"
-    case stayFit = "stay fit"
-    case gainMuscle = "gain muscle"
-    case undefined = "undefined"
-}
-
 struct GoalsEditView: View {
     @Environment(\.modelContext) var modelContext
     
-    @Query var goals: [GoalsModel]
+    @Query private var goals: [GoalsModel]
+    @Query private var users: [UserModel]
     
     @Binding var isEditGoalsActive: Bool
     
-    @State private var goal: GoalOptions = .undefined
+    @State private var targetGoal: GoalOptions = .undefined
     @State private var targetActivity: ActivityOptions = .undefined
     @State private var targetWeight: Float = 0
     @State private var targetCalories: Int = 0
-    @State private var targetBMI: Float = 0
+    @State private var targetBmi: Float = 0
+    @State private var progressPace: PaceOptions = .undefined
     @State private var estimatedDays: Int = 0
+    
+    @State private var isAlertPresented = false
+    
+    func isInputDataValid() -> Bool {
+        var isValid = false
+        
+        if targetGoal != .undefined &&
+            targetActivity != .undefined &&
+            targetWeight > 0 &&
+            targetCalories > 0 &&
+            targetBmi > 0 &&
+            estimatedDays > 0 {
+            isValid = true
+        }
+        
+        return isValid
+    }
+    
+    func updateTargetBmi() {
+        targetBmi = AppData.shared.calculateBmi(weight: targetWeight, height: users.first!.height)
+    }
+    
+    func updateTargetCalories() {
+        
+        guard progressPace != .undefined else { return }
+        
+        switch targetGoal {
+        case .weightLoss:
+            targetCalories = users.first!.currentDailyCalories - progressPace.caloriesCompensation
+        case .stayFit:
+            targetCalories = users.first!.currentDailyCalories
+        case .gainWeight:
+            targetCalories = users.first!.currentDailyCalories + progressPace.caloriesCompensation
+            // case for .undefined or .stayFit
+        default:
+            targetCalories = 0
+        }
+    }
+    
+    func updateEstimatedDays() {
+        guard targetWeight > 0 && progressPace != .undefined && targetGoal != .undefined else { return }
+        
+        estimatedDays = AppData.shared.calculateEstimatedDays(weightDifference: Int(targetWeight - users.first!.weight), progressPace: progressPace)
+    }
     
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Text( goals.count > 0 ? "Edit Goals" : "Add Goals")
-                    .font(.title)
-                
-                Text("Goal")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
-                
-                Picker("", selection: $goal) {
-                    Text(GoalOptions.weightLoss.rawValue).tag(GoalOptions.weightLoss)
-                    Text(GoalOptions.stayFit.rawValue).tag(GoalOptions.stayFit)
-                    Text(GoalOptions.gainMuscle.rawValue).tag(GoalOptions.gainMuscle)
-                }
-                .colorMultiply(.green)
-                .pickerStyle(.segmented)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                
-                HStack {
-                    Text("Target Weight (kg.)")
-                        .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                if users.isEmpty {
+                    Text("Please setup user data first!")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .bold()
+                } else {
+                    Text( goals.count > 0 ? "Edit Goals" : "Add Goals")
+                        .font(.title)
                     
-                    TextField("", value: $targetWeight, formatter: NumberFormatter())
-                        .keyboardType(.numberPad)
-                        .autocorrectionDisabled()
-                        .frame(maxWidth: .infinity, minHeight: 30.0)
-                        .padding(.horizontal, 5)
-                        .background(Color.gray.opacity(0.2))
-                }
-                .padding(.top, 20)
-                
-                HStack {
-                    Text("Target Calories")
-                        .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                    Text("Goal")
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 5)
                     
-                    Text("\(targetCalories)")
-                        .frame(maxWidth: .infinity)
-                }
-                .padding(.top, 40)
-                
-                HStack {
-                    Text("Target BMI")
-                        .frame(width: geometry.size.width * 0.5, alignment: .leading)
-                    
-                    Text(String(format: "%.2f", targetBMI))
-                        .frame(maxWidth: .infinity)
-                }
-                .padding(.top, 5)
-                
-                HStack {
-                    Text("Estimated Days")
-                        .frame(width: geometry.size.width * 0.5, alignment: .leading)
-                    
-                    Text(String(format: "%.2f", estimatedDays))
-                        .frame(maxWidth: .infinity)
-                }
-                .padding(.top, 5)
-                
-                Spacer()
-                
-                Button(action: {
-                    // TODO: check if all properties are valid
-                    if goals.count > 0 {
-                        goals[0].goal = goal.rawValue
-                        goals[0].targetActivity = targetActivity.rawValue
-                        goals[0].targetWeight = targetWeight
-                        goals[0].targetCalories = targetCalories
-                        goals[0].targetBMI = targetBMI
-                        goals[0].estimatedDays = estimatedDays
-                    } else {
-                        let goal = GoalsModel(goal: goal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBMI: targetBMI, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue)
-                        
-                        modelContext.insert(goal)
+                    Picker("", selection: $targetGoal) {
+                        Text(GoalOptions.weightLoss.rawValue).tag(GoalOptions.weightLoss)
+                        Text(GoalOptions.stayFit.rawValue).tag(GoalOptions.stayFit)
+                        Text(GoalOptions.gainWeight.rawValue).tag(GoalOptions.gainWeight)
+                    }
+                    .colorMultiply(.green)
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .onChange(of: targetGoal) {
+                        updateEstimatedDays()
+                        updateTargetCalories()
                     }
                     
-                    isEditGoalsActive = false
-                }, label: {
-                    Text("Save")
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 20.0)
-                })
-                .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                .padding(.top, 30)
-                .padding(.bottom, 20)
+                    Text("Target Activity")
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 15)
+                    
+                    Picker("", selection: $targetActivity) {
+                        Text(ActivityOptions.low.rawValue).tag(ActivityOptions.low)
+                        Text(ActivityOptions.moderate.rawValue).tag(ActivityOptions.moderate)
+                        Text(ActivityOptions.high.rawValue).tag(ActivityOptions.high)
+                    }
+                    .colorMultiply(.green)
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .onChange(of: targetGoal) {
+                        updateTargetCalories()
+                    }
+                    
+                    HStack {
+                        Text("Target Weight (kg.)")
+                            .bold()
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        TextField("", value: $targetWeight, formatter: NumberFormatter())
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled()
+                            .frame(maxWidth: .infinity, minHeight: 30.0)
+                            .padding(.horizontal, 5)
+                            .background(Color.gray.opacity(0.2))
+                            .onChange(of: targetWeight) {
+                                updateTargetBmi()
+                                updateTargetCalories()
+                                updateEstimatedDays()
+                            }
+                    }
+                    .padding(.top, 15)
+                    
+                    Text("Daily Calories")
+                        .padding(.top, 10)
+                        .bold()
+                    
+                    HStack {
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text("\(!users.isEmpty ? users.first!.currentDailyCalories : 0)")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    HStack {
+                        Text("Target")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text("\(targetCalories)")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    Text("BMI")
+                        .padding(.top, 10)
+                        .bold()
+                    
+                    HStack {
+                        Text("Current")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", users.first!.currentBmi))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    HStack {
+                        Text("Target")
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text(String(format: "%.2f", targetBmi))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    
+                    Text("Progress Pace")
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 15)
+                    
+                    Picker("", selection: $progressPace) {
+                        Text(PaceOptions.slow.rawValue).tag(PaceOptions.slow)
+                        Text(PaceOptions.normal.rawValue).tag(PaceOptions.normal)
+                        Text(PaceOptions.fast.rawValue).tag(PaceOptions.fast)
+                    }
+                    .colorMultiply(.green)
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .onChange(of: progressPace) {
+                        updateTargetCalories()
+                        updateEstimatedDays()
+                    }
+                    
+                    HStack {
+                        Text("Estimated Days")
+                            .bold()
+                            .frame(width: geometry.size.width * 0.5, alignment: .leading)
+                        
+                        Text("\(estimatedDays)")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .padding(.top, 15)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        if isInputDataValid() {
+                            if let goal = goals.first {
+                                goal.targetGoal = targetGoal.rawValue
+                                goal.targetActivity = targetActivity.rawValue
+                                goal.targetWeight = targetWeight
+                                goal.targetCalories = targetCalories
+                                goal.targetBmi = targetBmi
+                                goal.estimatedDays = estimatedDays
+                                goal.progressPace = progressPace.rawValue
+                            } else {
+                                let newGoal = GoalsModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
+                                
+                                modelContext.insert(newGoal)
+                            }
+                            
+                            isEditGoalsActive = false
+                        } else {
+                            isAlertPresented = true
+                        }
+                    }, label: {
+                        Text("Save")
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15.0)
+                    })
+                    .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
+                    .padding(.top, 30)
+                    .padding(.bottom, 10)
+                    .alert("Please fill all of the fields", isPresented: $isAlertPresented) {
+                        Button("OK", role: .cancel) { }
+                    }
+                }
             }
-            .padding(.top, 10)
-//            .frame(maxHeight: .infinity, alignment: .top)
-        }
-        .padding(.horizontal, 30)
-        .task {
-            if goals.count > 0 {
-                goal = GoalOptions(rawValue: goals[0].goal) ?? .undefined
-                targetActivity = ActivityOptions(rawValue: goals[0].targetActivity) ?? .undefined
-                targetWeight = goals[0].targetWeight
-                targetCalories = goals[0].targetCalories
-                targetBMI = goals[0].targetBMI
-                estimatedDays = goals[0].estimatedDays
+            .padding(.horizontal, 30)
+            .task {
+                if let goal = goals.first {
+                    targetGoal = GoalOptions(rawValue: goal.targetGoal) ?? .undefined
+                    targetActivity = ActivityOptions(rawValue: goal.targetActivity) ?? .undefined
+                    targetWeight = goal.targetWeight
+                    targetCalories = goal.targetCalories
+                    targetBmi = goal.targetBmi
+                    estimatedDays = goal.estimatedDays
+                    progressPace = PaceOptions(rawValue: goal.progressPace) ?? .undefined
+                }
             }
         }
     }
@@ -136,5 +256,5 @@ struct GoalsEditView: View {
 #Preview {
     @Previewable @State var value: Bool = true
     GoalsEditView(isEditGoalsActive: $value)
-        .modelContainer(for: GoalsModel.self, inMemory: true)
+        .modelContainer(for: [GoalsModel.self, UserModel.self], inMemory: true)
 }

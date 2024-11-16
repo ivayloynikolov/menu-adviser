@@ -7,23 +7,23 @@
 
 import SwiftUI
 
-struct AvailableFoodRowView: View {
+struct AllergenRowView: View {
     @State private var isEnabled = true
     
-    var food: String
+    @Binding var allergen: AllergenData
     
     var body: some View {    
         HStack {
-            Text(food)
-                .foregroundStyle(isEnabled ? .black : .secondary)
+            Text(allergen.name)
+                .foregroundStyle(allergen.isSelected ? .black : .secondary)
             
             Spacer()
             
             Button(action: {
-                isEnabled.toggle()
+                allergen.isSelected.toggle()
             }, label: {
-                Image(systemName: isEnabled ? "checkmark" : "xmark")
-                    .foregroundStyle(isEnabled ? .green : .red)
+                Image(systemName: allergen.isSelected ? "checkmark" : "xmark")
+                    .foregroundStyle(allergen.isSelected ? .green : .red)
             })
         }
         .padding(EdgeInsets(top: 5.0, leading: 30.0, bottom: 5.0, trailing: 30.0))
@@ -32,5 +32,6 @@ struct AvailableFoodRowView: View {
 }
 
 #Preview {
-    AvailableFoodRowView(food: "Preview name")
+    @Previewable @State var value = AllergenData(id: 0, name: "test", isSelected: false)
+    AllergenRowView(allergen: $value)
 }
