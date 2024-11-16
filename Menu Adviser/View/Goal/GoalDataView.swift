@@ -8,10 +8,10 @@
 import SwiftUI
 import SwiftData
 
-struct GoalsDataView: View {
+struct GoalDataView: View {
     @Environment(\.modelContext) var modelContext
     
-    @Query var goals: [GoalsModel]
+    @Query var goals: [GoalModel]
     @Query var users: [UserModel]
     
     @Binding var isEditGoalsActive: Bool
@@ -19,7 +19,7 @@ struct GoalsDataView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Text("Goals")
+                Text("Goal")
                     .font(.title)
                 
                 if goals.count > 0 {
@@ -136,7 +136,7 @@ struct GoalsDataView: View {
                     
                     Button(action: {
                         do {
-                            try modelContext.delete(model: GoalsModel.self)
+                            try modelContext.delete(model: GoalModel.self)
                             try modelContext.delete(model: DailyMenuModel.self)
                             try modelContext.save()
                         } catch {
@@ -177,6 +177,6 @@ struct GoalsDataView: View {
 
 #Preview {
     @Previewable @State var value: Bool = true
-    GoalsDataView(isEditGoalsActive: $value)
-        .modelContainer(for: [GoalsModel.self, UserModel.self], inMemory: true)
+    GoalDataView(isEditGoalsActive: $value)
+        .modelContainer(for: [GoalModel.self, UserModel.self], inMemory: true)
 }

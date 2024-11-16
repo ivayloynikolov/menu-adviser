@@ -8,10 +8,10 @@
 import SwiftUI
 import SwiftData
 
-struct GoalsEditView: View {
+struct GoalEditView: View {
     @Environment(\.modelContext) var modelContext
     
-    @Query private var goals: [GoalsModel]
+    @Query private var goals: [GoalModel]
     @Query private var users: [UserModel]
     
     @Binding var isEditGoalsActive: Bool
@@ -76,7 +76,7 @@ struct GoalsEditView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                         .bold()
                 } else {
-                    Text( goals.count > 0 ? "Edit Goals" : "Add Goals")
+                    Text( goals.count > 0 ? "Edit Goal" : "Add Goal")
                         .font(.title)
                     
                     Text("Goal")
@@ -214,7 +214,7 @@ struct GoalsEditView: View {
                                 goal.estimatedDays = estimatedDays
                                 goal.progressPace = progressPace.rawValue
                             } else {
-                                let newGoal = GoalsModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
+                                let newGoal = GoalModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
                                 
                                 modelContext.insert(newGoal)
                             }
@@ -255,6 +255,6 @@ struct GoalsEditView: View {
 
 #Preview {
     @Previewable @State var value: Bool = true
-    GoalsEditView(isEditGoalsActive: $value)
-        .modelContainer(for: [GoalsModel.self, UserModel.self], inMemory: true)
+    GoalEditView(isEditGoalsActive: $value)
+        .modelContainer(for: [GoalModel.self, UserModel.self], inMemory: true)
 }
