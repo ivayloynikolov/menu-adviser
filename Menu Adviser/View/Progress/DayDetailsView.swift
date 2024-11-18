@@ -10,7 +10,7 @@ import SwiftData
 
 struct DayDetailsView: View {
     
-    @Query private var goals: [GoalsModel]
+    @Query private var goals: [GoalModel]
     @Query private var users: [UserModel]
     
     let currentDay: Int

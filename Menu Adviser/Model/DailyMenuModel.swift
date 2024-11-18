@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 class DailyMenuModel: Identifiable {
-    var id: Int
+    @Attribute(.unique) var id: Int
     var breakfast: RecipeResponseData
     var lunch: RecipeResponseData
     var snack: RecipeResponseData

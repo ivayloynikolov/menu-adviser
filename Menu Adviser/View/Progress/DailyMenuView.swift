@@ -15,7 +15,7 @@ struct DailyMenuView: View {
     
     @Query private var dailyMenus: [DailyMenuModel]
     @Query private var users: [UserModel]
-    @Query private var goals: [GoalsModel]
+    @Query private var goals: [GoalModel]
     
     let currentDay: Int
     
@@ -95,5 +95,5 @@ struct DailyMenuView: View {
 
 #Preview {
     DailyMenuView(currentDay: 1)
-        .modelContainer(for: [GoalsModel.self, UserModel.self, DailyMenuModel.self], inMemory: true)
+        .modelContainer(for: [GoalModel.self, UserModel.self, DailyMenuModel.self], inMemory: true)
 }

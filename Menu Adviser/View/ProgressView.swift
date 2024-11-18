@@ -13,7 +13,7 @@ struct ProgressView: View {
     @Environment(\.selectedRecipe) var selectedRecipe
     
     @Query private var menus: [DailyMenuModel]
-    @Query private var goals: [GoalsModel]
+    @Query private var goals: [GoalModel]
     
     @State private var navigationPath = NavigationPath()
     @State private var isRecipeDetailsPresented: Bool = true

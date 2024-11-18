@@ -93,7 +93,7 @@ class AppData {
 //        }
 //    }
     
-    func generateDailyMenu(user: UserModel, goal: GoalsModel, completion: (RecipeDailyMenuData?) -> Void) {
+    func generateDailyMenu(user: UserModel, goal: GoalModel, completion: (RecipeDailyMenuData?) -> Void) {
         
         let recipeDailyMenuData = RecipeDailyMenuData()
         
@@ -130,7 +130,7 @@ class AppData {
         }
     }
     
-    func generateBreakfast(user: UserModel, goal: GoalsModel, completion: (RecipeResponseData?) -> Void) {
+    func generateBreakfast(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
         
         let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "breakfast", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
         
@@ -139,7 +139,7 @@ class AppData {
         })
     }
     
-    func generateLunch(user: UserModel, goal: GoalsModel, completion: (RecipeResponseData?) -> Void) {
+    func generateLunch(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
         
         let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "lunch", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
         
@@ -148,7 +148,7 @@ class AppData {
         })
     }
     
-    func generateSnack(user: UserModel, goal: GoalsModel, completion: (RecipeResponseData?) -> Void) {
+    func generateSnack(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
         
         let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "snack", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
         
@@ -157,7 +157,7 @@ class AppData {
         })
     }
     
-    func generateDinner(user: UserModel, goal: GoalsModel, completion: (RecipeResponseData?) -> Void) {
+    func generateDinner(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
         
         let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "dinner", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
         
