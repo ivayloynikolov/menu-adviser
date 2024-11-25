@@ -29,7 +29,7 @@ class NetworkController {
         })
     }
     
-    func getRecipeDataFromServer(recipeRequestData: RecipeRequestData, completion: (RecipeResponseData?) -> Void) {
+    func getRecipeDataFromServer(recipeRequestData: RecipeRequestData, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
         
         let queryItems = [
             URLQueryItem(name: "recipeTypes", value: recipeRequestData.recipeTypes),
@@ -46,32 +46,71 @@ class NetworkController {
         guard let url = URL(string: SERVER_URL)?
             .appending(queryItems: queryItems)
         else {
-            print("Invalid URL")
+            completion(.failure(.invalidURL))
             return
         }
         
         let session = URLSession.shared
         let task = session.dataTask(with: url) { data, response, error in
             if let error {
+                completion(.failure(.invalidResponse))
                 print("Error: \(error.localizedDescription)")
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                completion(.failure(.invalidResponse))
                 print("Invalid Response")
                 return
             }
             
             guard let data else {
+                completion(.failure(.noData))
                 print("No data received")
                 return
             }
             
             do {
                 let recipeData = try JSONDecoder().decode(RecipeResponseData.self, from: data)
-            
+                completion(.success(recipeData))
+            } catch DecodingError.keyNotFound(let key, let context) {
+              completion(
+                .failure(
+                  .decodeError(
+                    message: "Could not find key \(key) in JSON: \(context.debugDescription)",
+                    error: nil
+                  )
+                )
+              )
+            } catch DecodingError.valueNotFound(let type, let context) {
+              completion(
+                .failure(
+                  .decodeError(
+                    message: "Could not find type \(type) in JSON: \(context.debugDescription)",
+                    error: nil
+                  )
+                )
+              )
+            } catch DecodingError.typeMismatch(let type, let context) {
+              completion(
+                .failure(
+                  .decodeError(
+                    message: "Type mismatch for type \(type) in JSON: \(context.debugDescription)",
+                    error: nil
+                  )
+                )
+              )
+            } catch DecodingError.dataCorrupted(let context) {
+              completion(
+                .failure(
+                  .decodeError(
+                    message: "Data found to be corrupted in JSON: \(context.debugDescription)",
+                    error: nil
+                  )
+                )
+              )
             } catch {
-              print(error.localizedDescription)
+              completion(.failure(.decodeError(message: "Generic Decoding Error", error: error)))
             }
         }
         

@@ -16,6 +16,10 @@ struct DailyMenuView: View {
     @Query private var dailyMenus: [DailyMenuModel]
     @Query private var users: [UserModel]
     @Query private var goals: [GoalModel]
+    @Query private var preferences: [MenuPreferencesModel]
+    
+    @State private var isAlertPresented: Bool = false
+    @State private var errorMessage: String = ""
     
     let currentDay: Int
     
@@ -33,18 +37,34 @@ struct DailyMenuView: View {
                 Spacer()
                 
                 Button(action: {
-                    AppData.shared.generateDailyMenu(user: users.first!, goal: goals.first!) { response in
-                        if let menu = response {
+                    AppData.shared.generateDailyMenu(goal: goals.first!, preferences: preferences.first!) { result in
+                        switch result {
+                        case .success(let recipeDailyMenuData):
+                            errorMessage = ""
+                            
                             let dailyMenu = DailyMenuModel(
                                 id: currentDay,
                                 // breakfast, lunch, snack and dinner are confirmed as not nil in AppData
-                                breakfast: menu.breakfast!,
-                                lunch: menu.lunch!,
-                                snack: menu.snack!,
-                                dinner: menu.dinner!
+                                breakfast: recipeDailyMenuData.breakfast!,
+                                lunch: recipeDailyMenuData.lunch!,
+                                snack: recipeDailyMenuData.snack!,
+                                dinner: recipeDailyMenuData.dinner!
                             )
                             
                             modelContext.insert(dailyMenu)
+                        case .failure(let error):
+                            switch error {
+                            case .decodeError(let message, _):
+                                errorMessage = message
+                            case .invalidResponse:
+                                errorMessage = "Invalid Response!"
+                            case .invalidURL:
+                                errorMessage = "Invalid URL!"
+                            case .noData:
+                                errorMessage = "No Data!"
+                            }
+                            
+                            isAlertPresented = true
                         }
                     }
                 }, label: {
@@ -55,6 +75,9 @@ struct DailyMenuView: View {
                 })
                 .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                 .padding(.bottom, 10)
+                .alert("Error getting data from server", isPresented: $isAlertPresented) {
+                    Button("OK", role: .cancel) { }
+                }
             } else {
                 ScrollView(.vertical) {
                     Text("Breakfast")
@@ -95,5 +118,5 @@ struct DailyMenuView: View {
 
 #Preview {
     DailyMenuView(currentDay: 1)
-        .modelContainer(for: [GoalModel.self, UserModel.self, DailyMenuModel.self], inMemory: true)
+        .modelContainer(for: [GoalModel.self, UserModel.self, DailyMenuModel.self, MenuPreferencesModel.self], inMemory: true)
 }

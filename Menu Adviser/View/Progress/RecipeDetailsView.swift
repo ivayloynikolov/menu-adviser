@@ -20,7 +20,8 @@ struct RecipeDetailsView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .padding(.top, 20)
-                        
+                            .multilineTextAlignment(.center)
+                            
                         Text(selectedRecipe.recipeData!.recipeDescription)
                             .padding(.bottom, 30)
                         
@@ -69,7 +70,6 @@ struct RecipeDetailsView: View {
                             }
                             .frame(maxHeight: .infinity, alignment: .top)
                         }
-                        .padding(.horizontal, 20)
                         
                         Text("Ingredients")
                             .font(.title)
@@ -79,7 +79,6 @@ struct RecipeDetailsView: View {
                             Text("\(index + 1). \(direction)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding(.horizontal, 20)
                         
                         Text("Directions")
                             .font(.title)
@@ -89,8 +88,8 @@ struct RecipeDetailsView: View {
                             Text(direction)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding(.horizontal, 20)
                     }
+                    .padding(.horizontal, 20)
                 }
             }
         }

@@ -20,6 +20,47 @@ enum GoalOptions: String {
     case stayFit = "stay fit"
     case gainWeight = "gain weight"
     case undefined = "undefined"
+    
+    var macrosDistribution: (carbPercentageFrom: Int, carbPercentageTo: Int, fatPercentageFrom: Int, fatPercentageTo: Int, proteinPercentageFrom: Int, proteinPercentageTo: Int) {
+        switch self {
+        case .weightLoss:
+            return (
+                carbPercentageFrom: 35,
+                carbPercentageTo: 45,
+                fatPercentageFrom: 25,
+                fatPercentageTo: 30,
+                proteinPercentageFrom: 30,
+                proteinPercentageTo: 35
+            )
+        case .stayFit:
+            return (
+                carbPercentageFrom: 40,
+                carbPercentageTo: 60,
+                fatPercentageFrom: 25,
+                fatPercentageTo: 30,
+                proteinPercentageFrom: 15,
+                proteinPercentageTo: 30
+            )
+        case .gainWeight:
+            return (
+                carbPercentageFrom: 40,
+                carbPercentageTo: 55,
+                fatPercentageFrom: 20,
+                fatPercentageTo: 30,
+                proteinPercentageFrom: 25,
+                proteinPercentageTo: 30
+            )
+        case .undefined:
+            return (
+                carbPercentageFrom: 0,
+                carbPercentageTo: 0,
+                fatPercentageFrom: 0,
+                fatPercentageTo: 0,
+                proteinPercentageFrom: 0,
+                proteinPercentageTo: 0
+            )
+        }
+    }
 }
 
 enum PaceOptions: String {
@@ -30,14 +71,26 @@ enum PaceOptions: String {
     
     var caloriesCompensation: Int {
         switch self {
-        case .slow:
-            return 300
-        case .normal:
-            return 500
-        case .fast:
-            return 800
-        case .undefined:
-            return 0
+        case .slow: return 300
+        case .normal: return 500
+        case .fast: return 800
+        case .undefined: return 0
+        }
+    }
+}
+
+enum RecipeTypes: String, CaseIterable {
+    case breakfast
+    case lunch
+    case snack
+    case diner
+    
+    var caloriesDistribution: (from: Float, to: Float) {
+        switch self {
+        case .breakfast: return (from: 0.2, to: 0.25)
+        case .lunch: return (from: 0.3, to: 0.35)
+        case .snack: return (from: 0.1, to: 0.15)
+        case .diner: return (from: 0.3, to: 0.35)
         }
     }
 }
@@ -93,76 +146,54 @@ class AppData {
 //        }
 //    }
     
-    func generateDailyMenu(user: UserModel, goal: GoalModel, completion: (RecipeDailyMenuData?) -> Void) {
+    func generateDailyMenu(goal: GoalModel, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeDailyMenuData, NetworkError>) -> Void) {
         
         let recipeDailyMenuData = RecipeDailyMenuData()
         
-        generateBreakfast(user: user, goal: goal) { breakfastResponseData in
-            recipeDailyMenuData.breakfast = breakfastResponseData
-        
-            if recipeDailyMenuData.isComplete {
-                completion(recipeDailyMenuData)
+        for type in RecipeTypes.allCases {
+            requestRecipeFromServer(recipeType: type, goal: goal, preferences: preferences) { result in
+                switch result {
+                case .success(let responseData):
+                    switch type {
+                    case .breakfast: recipeDailyMenuData.breakfast = responseData
+                    case .lunch: recipeDailyMenuData.lunch = responseData
+                    case .snack: recipeDailyMenuData.snack = responseData
+                    case .diner: recipeDailyMenuData.dinner = responseData
+                    }
+                    
+                    if recipeDailyMenuData.isComplete {
+                        completion(.success(recipeDailyMenuData))
+                    }
+                case .failure(let failure):
+                    completion(.failure(failure))
+                }
             }
         }
+    }
+    
+    func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
         
-        generateLunch(user: user, goal: goal) { lunchResponseData in
-            recipeDailyMenuData.lunch = lunchResponseData
+        if let macrosDistribution = GoalOptions(rawValue: goal.targetGoal)?.macrosDistribution {
+            let recipeRequestData = RecipeRequestData(
+                recipeTypes: recipeType.rawValue,
+                caloriesFrom: Int(recipeType.caloriesDistribution.from),
+                caloriesTo: Int(recipeType.caloriesDistribution.to),
+                carbPercentageFrom: macrosDistribution.carbPercentageFrom,
+                carbPercentageTo: macrosDistribution.carbPercentageTo,
+                fatPercentageFrom: macrosDistribution.fatPercentageFrom,
+                fatPercentageTo: macrosDistribution.fatPercentageTo,
+                proteinPercentageFrom: macrosDistribution.proteinPercentageFrom,
+                proteinPercentageTo: macrosDistribution.proteinPercentageTo,
+                isVegan: preferences.isVegan,
+                isVegetarian: preferences.isVegetarian,
+                allergens: preferences.allergens.compactMap {$0.isSelected ? $0.name : nil}
+            )
             
-            if recipeDailyMenuData.isComplete {
-                completion(recipeDailyMenuData)
-            }
+            NetworkController.shared.getRecipeDataFromServer(recipeRequestData: recipeRequestData, completion: { result in
+                completion(result)
+            })
+        } else {
+            fatalError("Error accessing macros distribution data") // this error should not be possible
         }
-        
-        generateSnack(user: user, goal: goal) { snackResponseData in
-            recipeDailyMenuData.snack = snackResponseData
-            
-            if recipeDailyMenuData.isComplete {
-                completion(recipeDailyMenuData)
-            }
-        }
-        
-        generateDinner(user: user, goal: goal) { dinnerResponseData in
-            recipeDailyMenuData.dinner = dinnerResponseData
-            
-            if recipeDailyMenuData.isComplete {
-                completion(recipeDailyMenuData)
-            }
-        }
-    }
-    
-    func generateBreakfast(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
-        
-        let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "breakfast", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
-        
-        NetworkController.shared.getRecipeData(recipeRequestData: recipeRequestData, completion: { recipeResponseData in
-            completion(recipeResponseData)
-        })
-    }
-    
-    func generateLunch(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
-        
-        let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "lunch", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
-        
-        NetworkController.shared.getRecipeData(recipeRequestData: recipeRequestData, completion: { recipeResponseData in
-            completion(recipeResponseData)
-        })
-    }
-    
-    func generateSnack(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
-        
-        let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "snack", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
-        
-        NetworkController.shared.getRecipeData(recipeRequestData: recipeRequestData, completion: { recipeResponseData in
-            completion(recipeResponseData)
-        })
-    }
-    
-    func generateDinner(user: UserModel, goal: GoalModel, completion: (RecipeResponseData?) -> Void) {
-        
-        let recipeRequestData = RecipeRequestData(recipeId: nil, recipeTypes: "dinner", caloriesFrom: nil, caloriesTo: nil, carbPercentageFrom: nil, carbPercentageTo: nil, fatPercentageFrom: nil, fatPercentageTo: nil, proteinPercentageFrom: nil, proteinPercentageTo: nil)
-        
-        NetworkController.shared.getRecipeData(recipeRequestData: recipeRequestData, completion: { recipeResponseData in
-            completion(recipeResponseData)
-        })
     }
 }

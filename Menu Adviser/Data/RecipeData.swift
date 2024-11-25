@@ -26,16 +26,18 @@ class RecipeDailyMenuData: Codable {
 }
 
 struct RecipeRequestData: Codable {
-    let recipeId: String?
-    let recipeTypes: String?
-    let caloriesFrom: Int?
-    let caloriesTo: Int?
-    let carbPercentageFrom: Int?
-    let carbPercentageTo: Int?
-    let fatPercentageFrom: Int?
-    let fatPercentageTo: Int?
-    let proteinPercentageFrom: Int?
-    let proteinPercentageTo: Int?
+    let recipeTypes: String
+    let caloriesFrom: Int
+    let caloriesTo: Int
+    let carbPercentageFrom: Int
+    let carbPercentageTo: Int
+    let fatPercentageFrom: Int
+    let fatPercentageTo: Int
+    let proteinPercentageFrom: Int
+    let proteinPercentageTo: Int
+    let isVegan: Bool
+    let isVegetarian: Bool
+    let allergens: [String]
 }
 
 struct RecipeResponseData: Codable {
