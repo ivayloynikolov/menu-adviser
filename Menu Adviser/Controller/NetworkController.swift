@@ -17,7 +17,8 @@ enum NetworkError: Error {
 class NetworkController {
     static let shared = NetworkController()
     
-    let SERVER_URL: String = "https://a-pps.net/"
+    let SERVER_URL: String = "http://192.168.1.112:3000/fatsecret/recipeByNutrients"
+//    let SERVER_URL: String = "https://betterme-api.a-pps.net/recipe"
     
     private init() {}
     
@@ -31,16 +32,20 @@ class NetworkController {
     
     func getRecipeDataFromServer(recipeRequestData: RecipeRequestData, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
         
+        // TODO: find a better way to construct query items
         let queryItems = [
             URLQueryItem(name: "recipeTypes", value: recipeRequestData.recipeTypes),
-            URLQueryItem(name: "caloriesFrom", value: String(recipeRequestData.caloriesFrom ?? 0)),
-            URLQueryItem(name: "caloriesTo", value: String(recipeRequestData.caloriesTo ?? 2000)),
-            URLQueryItem(name: "carbPercentageFrom", value: String(recipeRequestData.carbPercentageFrom ?? 0)),
-            URLQueryItem(name: "carbPercentageTo", value: String(recipeRequestData.carbPercentageTo ?? 100)),
-            URLQueryItem(name: "carbPercentageFrom", value: String(recipeRequestData.carbPercentageFrom ?? 0)),
-            URLQueryItem(name: "carbPercentageTo", value: String(recipeRequestData.carbPercentageTo ?? 100)),
-            URLQueryItem(name: "carbPercentageFrom", value: String(recipeRequestData.carbPercentageFrom ?? 0)),
-            URLQueryItem(name: "carbPercentageTo", value: String(recipeRequestData.carbPercentageTo ?? 100))
+            URLQueryItem(name: "caloriesFrom", value: String(recipeRequestData.caloriesFrom)),
+            URLQueryItem(name: "caloriesTo", value: String(recipeRequestData.caloriesTo)),
+            URLQueryItem(name: "carbPercentageFrom", value: String(recipeRequestData.carbPercentageFrom)),
+            URLQueryItem(name: "carbPercentageTo", value: String(recipeRequestData.carbPercentageTo)),
+            URLQueryItem(name: "fatPercentageFrom", value: String(recipeRequestData.fatPercentageFrom)),
+            URLQueryItem(name: "fatPercentageTo", value: String(recipeRequestData.fatPercentageTo)),
+            URLQueryItem(name: "proteinPercentageFrom", value: String(recipeRequestData.proteinPercentageFrom)),
+            URLQueryItem(name: "proteinPercentageTo", value: String(recipeRequestData.proteinPercentageTo)),
+            URLQueryItem(name: "isVegan", value: String(recipeRequestData.isVegan)),
+            URLQueryItem(name: "isVegetarian", value: String(recipeRequestData.isVegetarian)),
+            URLQueryItem(name: "allergens", value: recipeRequestData.allergens.map{$0}.joined(separator: ","))
         ]
         
         guard let url = URL(string: SERVER_URL)?
@@ -49,6 +54,8 @@ class NetworkController {
             completion(.failure(.invalidURL))
             return
         }
+        
+        print(url)
         
         let session = URLSession.shared
         let task = session.dataTask(with: url) { data, response, error in
@@ -115,11 +122,5 @@ class NetworkController {
         }
         
         task.resume()
-    }
-    
-    enum CodingKeys: String, CodingKey {
-      case id
-      case categoryDescription = "description"
-      case iconString = "icon"
     }
 }

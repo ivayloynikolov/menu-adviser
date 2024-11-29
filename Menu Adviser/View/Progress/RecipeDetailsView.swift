@@ -66,7 +66,7 @@ struct RecipeDetailsView: View {
                                     .bold()
                                     .padding(.top, 5)
                                 
-                                Text(selectedRecipe.recipeData!.preparationTimeMin)
+                                Text("\(selectedRecipe.recipeData!.preparationTimeMin) min.")
                             }
                             .frame(maxHeight: .infinity, alignment: .top)
                         }
@@ -75,8 +75,8 @@ struct RecipeDetailsView: View {
                             .font(.title)
                             .padding(.top, 20)
                         
-                        ForEach(Array(selectedRecipe.recipeData!.recipeIngredients.enumerated()), id: \.0) { index, direction in
-                            Text("\(index + 1). \(direction)")
+                        ForEach(Array(selectedRecipe.recipeData!.recipeIngredients.enumerated()), id: \.0) { index, ingredient in
+                            Text("\(index + 1). \(ingredient)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         
@@ -85,7 +85,7 @@ struct RecipeDetailsView: View {
                             .padding(.top, 20)
                         
                         ForEach(Array(selectedRecipe.recipeData!.directions.enumerated()), id: \.0) { index, direction in
-                            Text(direction)
+                            Text("\(index + 1). \(direction)")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }

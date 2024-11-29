@@ -8,12 +8,13 @@
 import SwiftUI
 import SwiftData
 
-struct DayDetailsView: View {
+struct ProgressGraphicsView: View {
     
     @Query private var goals: [GoalModel]
     @Query private var users: [UserModel]
     
     let currentDay: Int
+    @State var isEnabled: Bool
     
     var body: some View {
         GeometryReader { geometry in
@@ -45,15 +46,6 @@ struct DayDetailsView: View {
                     ProgressBarView(title: "weight", initialValue: users.first!.weight, targetValue: goals.first!.targetWeight, estimatedDays: goals.first!.estimatedDays, currentDay: currentDay)
                     
                     ProgressBarView(title: "bmi", initialValue: users.first!.currentBmi, targetValue: goals.first!.targetBmi, estimatedDays: goals.first!.estimatedDays, currentDay: currentDay)
-                    
-                    Text("Daily menu")
-                        .bold()
-                        .font(.title)
-                        .frame(alignment: .center)
-                        .padding(.top, 30)
-                    
-                    DailyMenuView(currentDay: currentDay)
-                        .frame(height: geometry.size.height * 0.6, alignment: .bottom)
                 }
                 .padding(.horizontal, 30)
             } else {
@@ -64,5 +56,5 @@ struct DayDetailsView: View {
 }
 
 #Preview {
-    DayDetailsView(currentDay: 1)
+    ProgressGraphicsView(currentDay: 1, isEnabled: false)
 }

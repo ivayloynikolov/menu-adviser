@@ -11,72 +11,100 @@ import SwiftData
 struct DailyMenuView: View {
     
     @Environment(\.modelContext) var modelContext
-    @Environment(\.selectedRecipe) var selectedRecipe
     
     @Query private var dailyMenus: [DailyMenuModel]
     @Query private var users: [UserModel]
     @Query private var goals: [GoalModel]
     @Query private var preferences: [MenuPreferencesModel]
     
+    @State private var isGeneratingInProgress: Bool = false
     @State private var isAlertPresented: Bool = false
     @State private var errorMessage: String = ""
     
     let currentDay: Int
     
-    init(currentDay: Int) {
-        self.currentDay = currentDay
-        _dailyMenus = Query(filter: #Predicate { $0.id == currentDay } )
+    var isEnabled: Bool {
+        return dailyMenus.count == currentDay - 1
     }
            
     var body: some View {
         VStack {
-            if dailyMenus.isEmpty {
-                Text("You don't have a menu generated for the day yet.")
-                    .multilineTextAlignment(.center)
-                
-                Spacer()
-                
-                Button(action: {
-                    AppData.shared.generateDailyMenu(goal: goals.first!, preferences: preferences.first!) { result in
-                        switch result {
-                        case .success(let recipeDailyMenuData):
-                            errorMessage = ""
+            Text("Daily menu")
+                .bold()
+                .font(.title)
+                .frame(alignment: .center)
+                .padding(.top, 30)
+            
+            if dailyMenus.count < currentDay {
+                if isGeneratingInProgress {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                    
+                    Text("Generating Deily Menu ...")
+                } else {
+                    Text("You don't have a menu generated for this day yet.")
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 30)
+                    
+                    Text("Daily menus can be generated only in a subsequent order.")
+                        .multilineTextAlignment(.center)
+                    
+                    Spacer()
+                    
+                    if isEnabled {
+                        Button(action: {
+                            isGeneratingInProgress = true
                             
-                            let dailyMenu = DailyMenuModel(
-                                id: currentDay,
-                                // breakfast, lunch, snack and dinner are confirmed as not nil in AppData
-                                breakfast: recipeDailyMenuData.breakfast!,
-                                lunch: recipeDailyMenuData.lunch!,
-                                snack: recipeDailyMenuData.snack!,
-                                dinner: recipeDailyMenuData.dinner!
-                            )
-                            
-                            modelContext.insert(dailyMenu)
-                        case .failure(let error):
-                            switch error {
-                            case .decodeError(let message, _):
-                                errorMessage = message
-                            case .invalidResponse:
-                                errorMessage = "Invalid Response!"
-                            case .invalidURL:
-                                errorMessage = "Invalid URL!"
-                            case .noData:
-                                errorMessage = "No Data!"
+                            AppData.shared.generateDailyMenu(goal: goals.first!, preferences: preferences.first!) { result in
+                                switch result {
+                                case .success(let recipeDailyMenuData):
+                                    errorMessage = ""
+                                    
+                                    let dailyMenu = DailyMenuModel(
+                                        id: currentDay,
+                                        // breakfast, lunch, snack and dinner are confirmed as not nil in AppData
+                                        breakfast: recipeDailyMenuData.breakfast!,
+                                        lunch: recipeDailyMenuData.lunch!,
+                                        snack: recipeDailyMenuData.snack!,
+                                        dinner: recipeDailyMenuData.dinner!
+                                    )
+                                    
+                                    isGeneratingInProgress = false
+                                    
+                                    modelContext.insert(dailyMenu)
+                                    
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        print(error)
+                                    }
+                                case .failure(let error):
+                                    switch error {
+                                    case .decodeError(let message, _):
+                                        errorMessage = message
+                                    case .invalidResponse:
+                                        errorMessage = "Invalid Response!"
+                                    case .invalidURL:
+                                        errorMessage = "Invalid URL!"
+                                    case .noData:
+                                        errorMessage = "No Data!"
+                                    }
+                                    
+                                    isAlertPresented = true
+                                }
                             }
-                            
-                            isAlertPresented = true
+                        }, label: {
+                            Text("Generate Daily Menu")
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 15.0)
+                        })
+                        .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(isEnabled ? 0.7 : 0.2)
+                        .padding(.bottom, 10)
+                        .alert("Error getting data from server", isPresented: $isAlertPresented) {
+                            Button("OK", role: .cancel) { }
                         }
                     }
-                }, label: {
-                    Text("Generate Daily Menu")
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15.0)
-                })
-                .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                .padding(.bottom, 10)
-                .alert("Error getting data from server", isPresented: $isAlertPresented) {
-                    Button("OK", role: .cancel) { }
                 }
             } else {
                 ScrollView(.vertical) {
@@ -84,7 +112,7 @@ struct DailyMenuView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    RecipeMealRowView(recipeData: dailyMenus.first!.breakfast)
+                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].breakfast)
                     
                     Divider()
                     
@@ -92,7 +120,7 @@ struct DailyMenuView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    RecipeMealRowView(recipeData: dailyMenus.first!.lunch)
+                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].lunch)
                     
                     Divider()
                     
@@ -100,7 +128,7 @@ struct DailyMenuView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    RecipeMealRowView(recipeData: dailyMenus.first!.snack)
+                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].snack)
                     
                     Divider()
                     
@@ -108,11 +136,12 @@ struct DailyMenuView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    RecipeMealRowView(recipeData: dailyMenus.first!.dinner)
+                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].dinner)
                         .padding(.bottom, 20)
                 }
             }
         }
+        .padding(.horizontal, 20)
     }
 }
 

@@ -40,7 +40,7 @@ struct ProgressView: View {
                         .font(.title)
                     
                     if goals.isEmpty {
-                        Text("You must set goals first to be able to see the progress!")
+                        Text("In order to be able to use the Progress page you need to set a goal first!")
                             .bold()
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .multilineTextAlignment(.center)
@@ -48,11 +48,15 @@ struct ProgressView: View {
                         ScrollView(.horizontal) {
                             LazyHStack(spacing: spacingBetweenDayBadges) {
                                 ForEach(0..<goals.first!.estimatedDays, id: \.self) { index in
-                                    DayBadgeView(frameWidth: calculateBadgeWidth(screenWidth: geometry.size.width), dayId: index + 1, isSelected: index + 1 == selectedDay)
-                                        .id(index + 1)
-                                        .onTapGesture {
-                                            selectedDay = index + 1
-                                        }
+                                    DayBadgeView(
+                                        frameWidth: calculateBadgeWidth(screenWidth: geometry.size.width),
+                                        dayId: index + 1,
+                                        isSelected: index + 1 == selectedDay
+                                    )
+                                    .id(index + 1)
+                                    .onTapGesture {
+                                        selectedDay = index + 1
+                                    }
                                 }
                             }
                             .scrollTargetLayout()
@@ -61,14 +65,17 @@ struct ProgressView: View {
                         .padding(.horizontal, scrollViewPadding)
                         .frame(maxHeight: 180, alignment: .top)
                         .scrollPosition(id: $scrolledId)
-                        .onScrollPhaseChange { oldPhase, newPhase in
-                            if newPhase == .idle, let selectedId = scrolledId {
-                                selectedDay = selectedId
-                            }
-                        }
+//                        .onScrollPhaseChange { oldPhase, newPhase in
+//                            if newPhase == .idle, let selectedId = scrolledId {
+//                                selectedDay = selectedId
+//                            }
+//                        }
                         
-                        DayDetailsView(currentDay: selectedDay)
+                        ProgressGraphicsView(currentDay: selectedDay, isEnabled: menus.count + 1 == selectedDay)
                             .padding(.top, 20)
+                        
+                        DailyMenuView(currentDay: selectedDay)
+                            .frame(height: geometry.size.height * 0.5, alignment: .bottom)
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .top)

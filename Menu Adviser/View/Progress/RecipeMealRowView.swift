@@ -22,15 +22,19 @@ struct RecipeMealRowView: View {
                 HStack {
                     Text("calories: \(recipeData.recipeNutrition.calories)")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("fat: \(String(format: "%.2f", recipeData.recipeNutrition.fat))")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("carb: \(String(format: "%.2f", recipeData.recipeNutrition.carb))")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("protein: \(String(format: "%.2f", recipeData.recipeNutrition.protein))")
                         .font(.caption)
+                        .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

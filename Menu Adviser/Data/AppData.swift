@@ -83,14 +83,14 @@ enum RecipeTypes: String, CaseIterable {
     case breakfast
     case lunch
     case snack
-    case diner
+    case dinner
     
     var caloriesDistribution: (from: Float, to: Float) {
         switch self {
         case .breakfast: return (from: 0.2, to: 0.25)
         case .lunch: return (from: 0.3, to: 0.35)
         case .snack: return (from: 0.1, to: 0.15)
-        case .diner: return (from: 0.3, to: 0.35)
+        case .dinner: return (from: 0.3, to: 0.35)
         }
     }
 }
@@ -158,8 +158,10 @@ class AppData {
                     case .breakfast: recipeDailyMenuData.breakfast = responseData
                     case .lunch: recipeDailyMenuData.lunch = responseData
                     case .snack: recipeDailyMenuData.snack = responseData
-                    case .diner: recipeDailyMenuData.dinner = responseData
+                    case .dinner: recipeDailyMenuData.dinner = responseData
                     }
+                    
+                    print(type)
                     
                     if recipeDailyMenuData.isComplete {
                         completion(.success(recipeDailyMenuData))
@@ -176,8 +178,8 @@ class AppData {
         if let macrosDistribution = GoalOptions(rawValue: goal.targetGoal)?.macrosDistribution {
             let recipeRequestData = RecipeRequestData(
                 recipeTypes: recipeType.rawValue,
-                caloriesFrom: Int(recipeType.caloriesDistribution.from),
-                caloriesTo: Int(recipeType.caloriesDistribution.to),
+                caloriesFrom: Int(Float(goal.targetCalories) * recipeType.caloriesDistribution.from),
+                caloriesTo: Int(Float(goal.targetCalories) * recipeType.caloriesDistribution.to),
                 carbPercentageFrom: macrosDistribution.carbPercentageFrom,
                 carbPercentageTo: macrosDistribution.carbPercentageTo,
                 fatPercentageFrom: macrosDistribution.fatPercentageFrom,
@@ -186,7 +188,7 @@ class AppData {
                 proteinPercentageTo: macrosDistribution.proteinPercentageTo,
                 isVegan: preferences.isVegan,
                 isVegetarian: preferences.isVegetarian,
-                allergens: preferences.allergens.compactMap {$0.isSelected ? $0.name : nil}
+                allergens: preferences.allergens.compactMap {!$0.isSelected ? $0.name : nil}
             )
             
             NetworkController.shared.getRecipeDataFromServer(recipeRequestData: recipeRequestData, completion: { result in
