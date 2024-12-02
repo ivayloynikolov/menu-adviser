@@ -18,6 +18,14 @@ struct MenuPreferencesView: View {
     @State private var isVegetarian: Bool = false
     @State private var allergens: [AllergenData] = []
     
+    func saveContext() {
+        do {
+            try modelContext.save()
+        } catch {
+            print(error)
+        }
+    }
+    
     var body: some View {
         VStack {
             Text("Menu Preferences")
@@ -32,6 +40,8 @@ struct MenuPreferencesView: View {
                     
                     menuPreferences.first!.isVegan = isVegan
                     menuPreferences.first!.isVegetarian = isVegetarian
+                    
+                    saveContext()
                 }
             
             Toggle("Vegetarian menu", isOn: $isVegetarian)
@@ -43,6 +53,8 @@ struct MenuPreferencesView: View {
                     
                     menuPreferences.first!.isVegan = isVegan
                     menuPreferences.first!.isVegetarian = isVegetarian
+                    
+                    saveContext()
                 }
             
             Text("Allergens included in the recipes")
@@ -55,6 +67,8 @@ struct MenuPreferencesView: View {
             .padding(.horizontal, 0)
             .onChange(of: allergens) { oldValue, newValue in
                 menuPreferences.first!.allergens = allergens
+                
+                saveContext()
             }
         }
         .task {
@@ -67,13 +81,7 @@ struct MenuPreferencesView: View {
                         
                         modelContext.insert(preferences)
                         
-                        do {
-                            try modelContext.save()
-                            
-                            print(menuPreferences.count)
-                        } catch {
-                            print(error)
-                        }
+                        saveContext()
                     }
                 }
             } else {

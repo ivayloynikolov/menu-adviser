@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ProgressView: View {
+struct ProgressDaysView: View {
     
     @Environment(\.selectedRecipe) var selectedRecipe
     
@@ -50,7 +50,7 @@ struct ProgressView: View {
                                 ForEach(0..<goals.first!.estimatedDays, id: \.self) { index in
                                     DayBadgeView(
                                         frameWidth: calculateBadgeWidth(screenWidth: geometry.size.width),
-                                        dayId: index + 1,
+                                        currentDay: index + 1,
                                         isSelected: index + 1 == selectedDay
                                     )
                                     .id(index + 1)
@@ -71,7 +71,7 @@ struct ProgressView: View {
 //                            }
 //                        }
                         
-                        ProgressGraphicsView(currentDay: selectedDay, isEnabled: menus.count + 1 == selectedDay)
+                        ProgressGraphicsView(currentDay: selectedDay, hasGeneratedMenu: menus.count > selectedDay - 1)
                             .padding(.top, 20)
                         
                         DailyMenuView(currentDay: selectedDay)
@@ -86,10 +86,14 @@ struct ProgressView: View {
                 }
             }
         }
+        .task {
+            selectedDay = menus.count > 0 ? menus.count : 1
+            scrolledId = menus.count + 1
+        }
     }
 }
 
 #Preview {
-    ProgressView()
+    ProgressDaysView()
         .modelContainer(for: DailyMenuModel.self, inMemory: true)
 }

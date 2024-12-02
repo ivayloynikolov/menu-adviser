@@ -127,7 +127,8 @@ struct GoalDataView: View {
                         isEditGoalsActive = true
                     }, label: {
                         Text("Edit Goals")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.black)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15.0)
                     })
@@ -144,7 +145,8 @@ struct GoalDataView: View {
                         }
                     }, label: {
                         Text("Delete Goals")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.black)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15.0)
                     })
@@ -162,6 +164,7 @@ struct GoalDataView: View {
                     }, label: {
                         Text("Add Goals")
                             .foregroundStyle(.white)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 20.0)
                     })

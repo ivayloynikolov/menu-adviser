@@ -17,8 +17,8 @@ enum NetworkError: Error {
 class NetworkController {
     static let shared = NetworkController()
     
-    let SERVER_URL: String = "http://192.168.1.112:3000/fatsecret/recipeByNutrients"
-//    let SERVER_URL: String = "https://betterme-api.a-pps.net/recipe"
+//    let SERVER_URL: String = "http://192.168.1.112:3000/menuadviser/recipeByNutrients"
+    let SERVER_URL: String = "https://betterme-api.a-pps.net/menuadviser/recipeByNutrients"
     
     private init() {}
     

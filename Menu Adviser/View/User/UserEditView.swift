@@ -168,7 +168,8 @@ struct UserEditView: View {
                     }
                 }, label: {
                     Text("Save")
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.black)
+                        .bold()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20.0)
                 })

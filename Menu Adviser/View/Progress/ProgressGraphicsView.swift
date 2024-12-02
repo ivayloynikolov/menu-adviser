@@ -14,7 +14,7 @@ struct ProgressGraphicsView: View {
     @Query private var users: [UserModel]
     
     let currentDay: Int
-    @State var isEnabled: Bool
+    @State var hasGeneratedMenu: Bool
     
     var body: some View {
         GeometryReader { geometry in
@@ -48,6 +48,7 @@ struct ProgressGraphicsView: View {
                     ProgressBarView(title: "bmi", initialValue: users.first!.currentBmi, targetValue: goals.first!.targetBmi, estimatedDays: goals.first!.estimatedDays, currentDay: currentDay)
                 }
                 .padding(.horizontal, 30)
+                .opacity(hasGeneratedMenu ? 1.0 : 0.2)
             } else {
                 Text("Setup user and goals first!")
             }
@@ -56,5 +57,5 @@ struct ProgressGraphicsView: View {
 }
 
 #Preview {
-    ProgressGraphicsView(currentDay: 1, isEnabled: false)
+    ProgressGraphicsView(currentDay: 1, hasGeneratedMenu: false)
 }

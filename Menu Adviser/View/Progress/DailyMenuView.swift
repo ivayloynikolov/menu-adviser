@@ -35,13 +35,17 @@ struct DailyMenuView: View {
                 .frame(alignment: .center)
                 .padding(.top, 30)
             
-            if dailyMenus.count < currentDay {
-                if isGeneratingInProgress {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                    
-                    Text("Generating Deily Menu ...")
-                } else {
+            if isGeneratingInProgress {
+                Spacer()
+                
+                ProgressView()
+                    .progressViewStyle(.circular)
+                
+                Text("Generating Deily Menu ...")
+                
+                Spacer()
+            } else {
+                if dailyMenus.count < currentDay {
                     Text("You don't have a menu generated for this day yet.")
                         .multilineTextAlignment(.center)
                         .padding(.top, 30)
@@ -55,7 +59,7 @@ struct DailyMenuView: View {
                         Button(action: {
                             isGeneratingInProgress = true
                             
-                            AppData.shared.generateDailyMenu(goal: goals.first!, preferences: preferences.first!) { result in
+                            AppData.shared.generateDailyMenu(goal: goals.first!, defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus), preferences: preferences.first!) { result in
                                 switch result {
                                 case .success(let recipeDailyMenuData):
                                     errorMessage = ""
@@ -66,7 +70,8 @@ struct DailyMenuView: View {
                                         breakfast: recipeDailyMenuData.breakfast!,
                                         lunch: recipeDailyMenuData.lunch!,
                                         snack: recipeDailyMenuData.snack!,
-                                        dinner: recipeDailyMenuData.dinner!
+                                        dinner: recipeDailyMenuData.dinner!,
+                                        calculatedDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)
                                     )
                                     
                                     isGeneratingInProgress = false
@@ -95,7 +100,8 @@ struct DailyMenuView: View {
                             }
                         }, label: {
                             Text("Generate Daily Menu")
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.black)
+                                .bold()
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 15.0)
                         })
@@ -105,39 +111,39 @@ struct DailyMenuView: View {
                             Button("OK", role: .cancel) { }
                         }
                     }
-                }
-            } else {
-                ScrollView(.vertical) {
-                    Text("Breakfast")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].breakfast)
-                    
-                    Divider()
-                    
-                    Text("Lunch")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].lunch)
-                    
-                    Divider()
-                    
-                    Text("Snack")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].snack)
-                    
-                    Divider()
-                    
-                    Text("Dinner")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].dinner)
-                        .padding(.bottom, 20)
+                } else {
+                    ScrollView(.vertical) {
+                        Text("Breakfast")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].breakfast)
+                        
+                        Divider()
+                        
+                        Text("Lunch")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].lunch)
+                        
+                        Divider()
+                        
+                        Text("Snack")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].snack)
+                        
+                        Divider()
+                        
+                        Text("Dinner")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].dinner)
+                            .padding(.bottom, 20)
+                    }
                 }
             }
         }

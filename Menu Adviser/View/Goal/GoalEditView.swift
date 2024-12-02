@@ -217,6 +217,12 @@ struct GoalEditView: View {
                                 let newGoal = GoalModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
                                 
                                 modelContext.insert(newGoal)
+                                
+                                do {
+                                    try modelContext.save()
+                                } catch {
+                                    print(error)
+                                }
                             }
                             
                             isEditGoalsActive = false
@@ -225,7 +231,8 @@ struct GoalEditView: View {
                         }
                     }, label: {
                         Text("Save")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.black)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15.0)
                     })

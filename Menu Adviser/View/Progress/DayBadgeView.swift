@@ -14,20 +14,24 @@ struct DayBadgeView: View {
     @Query private var goals: [GoalModel]
     
     let frameWidth: CGFloat
-    let dayId: Int
+    let currentDay: Int
     let isSelected: Bool
     
+    var hasGeneratedMenu: Bool {
+        return dailyMenus.count > currentDay - 1
+    }
+    
     var isEnabled: Bool {
-        return dailyMenus.count == dayId - 1
+        return dailyMenus.count == currentDay - 1
     }
     
     var isLocked: Bool {
-        return dailyMenus.count < dayId - 1
+        return dailyMenus.count < currentDay - 1
     }
     
     var caloriesDiference: Int {
-        if let goal = goals.first, dailyMenus.count >= dayId {
-            return goal.targetCalories - dailyMenus[dayId - 1].menuCalories
+        if goals.first != nil, hasGeneratedMenu {
+            return dailyMenus[currentDay - 1].calculatedDailyCalories - dailyMenus[currentDay - 1].menuCalories
         } else {
             return 0
         }
@@ -47,14 +51,14 @@ struct DayBadgeView: View {
                     .bold()
                     .font(.largeTitle)
                 
-                Text("\(dayId)")
+                Text("\(currentDay)")
                     .bold()
                     .font(.largeTitle)
                 
-                Text("\(goals.first != nil ? goals.first!.targetCalories : 0) cal.")
+                Text("\(hasGeneratedMenu ? dailyMenus[currentDay - 1].calculatedDailyCalories : AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)) cal.")
                 
                 if caloriesDiference != 0 {
-                    Text("(\(caloriesDiference > 0 ? "+" : "")\(caloriesDiference))")
+                    Text("(\(caloriesDiference > 0 ? "-" : "+")\(abs(caloriesDiference)))")
                         .foregroundColor(caloriesDiference > 0 ? .init(red: 0.0, green: 0.4, blue: 0.2) : .red)
                         .bold()
                         .font(.caption)
@@ -70,6 +74,6 @@ struct DayBadgeView: View {
 }
 
 #Preview {
-    DayBadgeView(frameWidth: 100, dayId: 1, isSelected: false)
+    DayBadgeView(frameWidth: 100, currentDay: 1, isSelected: false)
         .modelContainer(for: [GoalModel.self, DailyMenuModel.self], inMemory: true)
 }

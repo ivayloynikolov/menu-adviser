@@ -86,7 +86,8 @@ struct UserDataView: View {
                         isEditUserActive = true
                     }, label: {
                         Text("Edit User")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.black)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15.0)
                     })
@@ -102,7 +103,8 @@ struct UserDataView: View {
                         }
                     }, label: {
                         Text("Delete User")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.black)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15.0)
                     })

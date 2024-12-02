@@ -15,6 +15,13 @@ struct ProgressBarView: View {
     let estimatedDays: Int
     let currentDay: Int
     
+    @State private var progressWidth: Double = 0.0
+    
+    var progressAnimation: Animation {
+            Animation
+            .easeInOut(duration: 0.5)
+        }
+    
     func calculateEstimatedValue() -> Float {
         var estimatedValue: Float = 0.0
         let dailyValueProgress = (targetValue - initialValue) / Float(estimatedDays)
@@ -26,7 +33,7 @@ struct ProgressBarView: View {
     
     func calculateProgressBarWidth(totalBarWidth: Double) -> Double {
         var progressBarWidth = 0.0
-        let progressPercent = (Double(estimatedDays) / 100.0) * Double(currentDay)
+        let progressPercent = (100.0 / Double(estimatedDays)) * Double(currentDay)
         
         progressBarWidth = (totalBarWidth / 100.0) * progressPercent
         
@@ -49,7 +56,12 @@ struct ProgressBarView: View {
                         Color.green
                             .opacity(0.8)
                             .cornerRadius(25)
-                            .frame(width: calculateProgressBarWidth(totalBarWidth: geometry.size.width), height: 10.0)
+                            .frame(width: progressWidth, height: 10.0)
+                            .onChange(of: currentDay) {
+                                withAnimation(.easeOut(duration: 0.5)) {
+                                    progressWidth = calculateProgressBarWidth(totalBarWidth: geometry.size.width * 0.8)
+                                }
+                            }
                     }
                 }
                 

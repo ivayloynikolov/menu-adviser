@@ -39,7 +39,7 @@ struct ContentView: View {
                     Text("Menu")
                 }
             
-            ProgressView()
+            ProgressDaysView()
                 .environment(\.selectedRecipe, selectedRecipe)
                 .tag(3)
                 .tabItem {

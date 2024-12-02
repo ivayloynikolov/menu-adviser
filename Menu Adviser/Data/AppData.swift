@@ -25,30 +25,30 @@ enum GoalOptions: String {
         switch self {
         case .weightLoss:
             return (
-                carbPercentageFrom: 35,
-                carbPercentageTo: 45,
-                fatPercentageFrom: 25,
-                fatPercentageTo: 30,
-                proteinPercentageFrom: 30,
-                proteinPercentageTo: 35
+                carbPercentageFrom: 25,
+                carbPercentageTo: 55,
+                fatPercentageFrom: 15,
+                fatPercentageTo: 40,
+                proteinPercentageFrom: 20,
+                proteinPercentageTo: 45
             )
         case .stayFit:
             return (
-                carbPercentageFrom: 40,
-                carbPercentageTo: 60,
-                fatPercentageFrom: 25,
-                fatPercentageTo: 30,
-                proteinPercentageFrom: 15,
-                proteinPercentageTo: 30
+                carbPercentageFrom: 30,
+                carbPercentageTo: 70,
+                fatPercentageFrom: 15,
+                fatPercentageTo: 40,
+                proteinPercentageFrom: 5,
+                proteinPercentageTo: 40
             )
         case .gainWeight:
             return (
-                carbPercentageFrom: 40,
-                carbPercentageTo: 55,
-                fatPercentageFrom: 20,
-                fatPercentageTo: 30,
-                proteinPercentageFrom: 25,
-                proteinPercentageTo: 30
+                carbPercentageFrom: 30,
+                carbPercentageTo: 65,
+                fatPercentageFrom: 10,
+                fatPercentageTo: 40,
+                proteinPercentageFrom: 15,
+                proteinPercentageTo: 40
             )
         case .undefined:
             return (
@@ -87,10 +87,10 @@ enum RecipeTypes: String, CaseIterable {
     
     var caloriesDistribution: (from: Float, to: Float) {
         switch self {
-        case .breakfast: return (from: 0.2, to: 0.25)
-        case .lunch: return (from: 0.3, to: 0.35)
-        case .snack: return (from: 0.1, to: 0.15)
-        case .dinner: return (from: 0.3, to: 0.35)
+        case .breakfast: return (from: 0.15, to: 0.3)
+        case .lunch: return (from: 0.25, to: 0.4)
+        case .snack: return (from: 0.05, to: 0.2)
+        case .dinner: return (from: 0.25, to: 0.4)
         }
     }
 }
@@ -126,6 +126,26 @@ class AppData {
         return days
     }
     
+    func calculateDefaultDailyCalories(goals: [GoalModel], dailyMenus: [DailyMenuModel]) -> Int {
+        guard  goals.first != nil else { return 0 }
+        
+        if dailyMenus.count > 0 {
+            var sumOfCaloriesForDaysWithMenu = 0
+            
+            for menu in dailyMenus {
+                sumOfCaloriesForDaysWithMenu += menu.menuCalories
+            }
+            
+            let totalCaloriesToTheEnd = goals.first!.targetCalories * goals.first!.estimatedDays
+            
+            let calories = (totalCaloriesToTheEnd - sumOfCaloriesForDaysWithMenu) / (goals.first!.estimatedDays - dailyMenus.count)
+            
+            return calories
+        } else {
+            return goals.first!.targetCalories
+        }
+    }
+    
     func getAllergens(completion: (AllergensList?) -> Void) {
         if _allergens != nil {
             completion(_allergens)
@@ -146,12 +166,12 @@ class AppData {
 //        }
 //    }
     
-    func generateDailyMenu(goal: GoalModel, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeDailyMenuData, NetworkError>) -> Void) {
+    func generateDailyMenu(goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeDailyMenuData, NetworkError>) -> Void) {
         
         let recipeDailyMenuData = RecipeDailyMenuData()
         
         for type in RecipeTypes.allCases {
-            requestRecipeFromServer(recipeType: type, goal: goal, preferences: preferences) { result in
+            requestRecipeFromServer(recipeType: type, goal: goal, defaultDailyCalories: defaultDailyCalories, preferences: preferences) { result in
                 switch result {
                 case .success(let responseData):
                     switch type {
@@ -173,13 +193,13 @@ class AppData {
         }
     }
     
-    func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
+    func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
         
         if let macrosDistribution = GoalOptions(rawValue: goal.targetGoal)?.macrosDistribution {
             let recipeRequestData = RecipeRequestData(
                 recipeTypes: recipeType.rawValue,
-                caloriesFrom: Int(Float(goal.targetCalories) * recipeType.caloriesDistribution.from),
-                caloriesTo: Int(Float(goal.targetCalories) * recipeType.caloriesDistribution.to),
+                caloriesFrom: Int(Float(defaultDailyCalories) * recipeType.caloriesDistribution.from),
+                caloriesTo: Int(Float(defaultDailyCalories) * recipeType.caloriesDistribution.to),
                 carbPercentageFrom: macrosDistribution.carbPercentageFrom,
                 carbPercentageTo: macrosDistribution.carbPercentageTo,
                 fatPercentageFrom: macrosDistribution.fatPercentageFrom,
