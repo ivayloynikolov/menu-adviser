@@ -41,7 +41,7 @@ struct DailyMenuView: View {
                 ProgressView()
                     .progressViewStyle(.circular)
                 
-                Text("Generating Deily Menu ...")
+                Text("Generating Daily Menu ...")
                 
                 Spacer()
             } else {
@@ -59,9 +59,17 @@ struct DailyMenuView: View {
                         Button(action: {
                             isGeneratingInProgress = true
                             
-                            AppData.shared.generateDailyMenu(goal: goals.first!, defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus), preferences: preferences.first!) { result in
-                                switch result {
-                                case .success(let recipeDailyMenuData):
+                            Task {
+                                do {
+                                    let recipeDailyMenuData = try await AppData.shared.generateDailyMenu(
+                                        goal: goals.first!,
+                                        defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(
+                                            goals: goals,
+                                            dailyMenus: dailyMenus
+                                        ),
+                                        preferences: preferences.first!
+                                    )
+                                    
                                     errorMessage = ""
                                     
                                     let dailyMenu = DailyMenuModel(
@@ -83,8 +91,9 @@ struct DailyMenuView: View {
                                     } catch {
                                         print(error)
                                     }
-                                case .failure(let error):
-                                    switch error {
+                                } catch let networkError as NetworkError {
+                                    
+                                    switch networkError {
                                     case .decodeError(let message, _):
                                         errorMessage = message
                                     case .invalidResponse:

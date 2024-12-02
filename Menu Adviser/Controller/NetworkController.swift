@@ -30,7 +30,7 @@ class NetworkController {
         })
     }
     
-    func getRecipeDataFromServer(recipeRequestData: RecipeRequestData, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
+    func getRecipeDataFromServer(recipeRequestData: RecipeRequestData) async throws -> RecipeResponseData {
         
         // TODO: find a better way to construct query items
         let queryItems = [
@@ -51,76 +51,40 @@ class NetworkController {
         guard let url = URL(string: SERVER_URL)?
             .appending(queryItems: queryItems)
         else {
-            completion(.failure(.invalidURL))
-            return
+            throw NetworkError.invalidURL
         }
         
-        print(url)
+        let (data, response) = try await URLSession.shared.data(from: url)
         
-        let session = URLSession.shared
-        let task = session.dataTask(with: url) { data, response, error in
-            if let error {
-                completion(.failure(.invalidResponse))
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-                completion(.failure(.invalidResponse))
-                print("Invalid Response")
-                return
-            }
-            
-            guard let data else {
-                completion(.failure(.noData))
-                print("No data received")
-                return
-            }
-            
-            do {
-                let recipeData = try JSONDecoder().decode(RecipeResponseData.self, from: data)
-                completion(.success(recipeData))
-            } catch DecodingError.keyNotFound(let key, let context) {
-              completion(
-                .failure(
-                  .decodeError(
-                    message: "Could not find key \(key) in JSON: \(context.debugDescription)",
-                    error: nil
-                  )
-                )
-              )
-            } catch DecodingError.valueNotFound(let type, let context) {
-              completion(
-                .failure(
-                  .decodeError(
-                    message: "Could not find type \(type) in JSON: \(context.debugDescription)",
-                    error: nil
-                  )
-                )
-              )
-            } catch DecodingError.typeMismatch(let type, let context) {
-              completion(
-                .failure(
-                  .decodeError(
-                    message: "Type mismatch for type \(type) in JSON: \(context.debugDescription)",
-                    error: nil
-                  )
-                )
-              )
-            } catch DecodingError.dataCorrupted(let context) {
-              completion(
-                .failure(
-                  .decodeError(
-                    message: "Data found to be corrupted in JSON: \(context.debugDescription)",
-                    error: nil
-                  )
-                )
-              )
-            } catch {
-              completion(.failure(.decodeError(message: "Generic Decoding Error", error: error)))
-            }
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw NetworkError.invalidResponse
         }
         
-        task.resume()
+        do {
+            let recipeData = try JSONDecoder().decode(RecipeResponseData.self, from: data)
+            return recipeData
+        } catch DecodingError.keyNotFound(let key, let context) {
+            throw NetworkError.decodeError(
+                message: "Could not find key \(key) in JSON: \(context.debugDescription)",
+                error: nil
+            )
+        } catch DecodingError.valueNotFound(let type, let context) {
+            throw NetworkError.decodeError(
+                message: "Could not find type \(type) in JSON: \(context.debugDescription)",
+                error: nil
+            )
+        } catch DecodingError.typeMismatch(let type, let context) {
+            throw NetworkError.decodeError(
+                message: "Type mismatch for type \(type) in JSON: \(context.debugDescription)",
+                error: nil
+            )
+        } catch DecodingError.dataCorrupted(let context) {
+            throw NetworkError.decodeError(
+                message: "Data found to be corrupted in JSON: \(context.debugDescription)",
+                error: nil
+            )
+        } catch {
+            throw NetworkError.decodeError(message: "Generic Decoding Error", error: error)
+        }
     }
 }

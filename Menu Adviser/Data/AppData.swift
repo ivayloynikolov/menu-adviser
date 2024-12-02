@@ -166,34 +166,29 @@ class AppData {
 //        }
 //    }
     
-    func generateDailyMenu(goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeDailyMenuData, NetworkError>) -> Void) {
+    func generateDailyMenu(goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel) async throws -> RecipeDailyMenuData {
         
         let recipeDailyMenuData = RecipeDailyMenuData()
         
         for type in RecipeTypes.allCases {
-            requestRecipeFromServer(recipeType: type, goal: goal, defaultDailyCalories: defaultDailyCalories, preferences: preferences) { result in
-                switch result {
-                case .success(let responseData):
-                    switch type {
-                    case .breakfast: recipeDailyMenuData.breakfast = responseData
-                    case .lunch: recipeDailyMenuData.lunch = responseData
-                    case .snack: recipeDailyMenuData.snack = responseData
-                    case .dinner: recipeDailyMenuData.dinner = responseData
-                    }
-                    
-                    print(type)
-                    
-                    if recipeDailyMenuData.isComplete {
-                        completion(.success(recipeDailyMenuData))
-                    }
-                case .failure(let failure):
-                    completion(.failure(failure))
+            do {
+                let responseData = try await requestRecipeFromServer(recipeType: type, goal: goal, defaultDailyCalories: defaultDailyCalories, preferences: preferences)
+                
+                switch type {
+                case .breakfast: recipeDailyMenuData.breakfast = responseData
+                case .lunch: recipeDailyMenuData.lunch = responseData
+                case .snack: recipeDailyMenuData.snack = responseData
+                case .dinner: recipeDailyMenuData.dinner = responseData
                 }
+            } catch let networkError {
+                throw networkError
             }
         }
+        
+        return recipeDailyMenuData
     }
     
-    func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel, completion: @escaping(Result<RecipeResponseData, NetworkError>) -> Void) {
+    func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel) async throws -> RecipeResponseData {
         
         if let macrosDistribution = GoalOptions(rawValue: goal.targetGoal)?.macrosDistribution {
             let recipeRequestData = RecipeRequestData(
@@ -211,9 +206,14 @@ class AppData {
                 allergens: preferences.allergens.compactMap {!$0.isSelected ? $0.name : nil}
             )
             
-            NetworkController.shared.getRecipeDataFromServer(recipeRequestData: recipeRequestData, completion: { result in
-                completion(result)
-            })
+            do {
+                let result = try await NetworkController.shared.getRecipeDataFromServer(recipeRequestData: recipeRequestData)
+                
+                return result
+            } catch let networkError {
+                throw networkError
+            }
+            
         } else {
             fatalError("Error accessing macros distribution data") // this error should not be possible
         }
