@@ -97,6 +97,8 @@ struct UserDataView: View {
                     Button(action: {
                         do {
                             try modelContext.delete(model: UserModel.self)
+                            try modelContext.delete(model: GoalModel.self)
+                            try modelContext.delete(model: DailyMenuModel.self)
                             try modelContext.save()
                         } catch {
                             print(error)
