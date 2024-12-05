@@ -40,7 +40,7 @@ struct ProgressDaysView: View {
                         .font(.title)
                     
                     if goals.isEmpty {
-                        Text("In order to be able to use the Progress page you need to set a goal first!")
+                        Text("Please set up your goal first!")
                             .bold()
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .multilineTextAlignment(.center)
@@ -65,11 +65,6 @@ struct ProgressDaysView: View {
                         .padding(.horizontal, scrollViewPadding)
                         .frame(maxHeight: 180, alignment: .top)
                         .scrollPosition(id: $scrolledId)
-//                        .onScrollPhaseChange { oldPhase, newPhase in
-//                            if newPhase == .idle, let selectedId = scrolledId {
-//                                selectedDay = selectedId
-//                            }
-//                        }
                         
                         ProgressGraphicsView(currentDay: selectedDay, hasGeneratedMenu: menus.count > selectedDay - 1)
                             .padding(.top, 20)
@@ -87,7 +82,7 @@ struct ProgressDaysView: View {
             }
         }
         .task {
-            selectedDay = menus.count > 0 ? menus.count : 1
+            selectedDay = menus.isEmpty ? 1 : menus.count
             scrolledId = menus.count + 1
         }
     }

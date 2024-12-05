@@ -22,7 +22,26 @@ struct GoalDataView: View {
                 Text("Goal")
                     .font(.title)
                 
-                if goals.count > 0 {
+                if goals.isEmpty {
+                    Text("Please add goals data")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .bold()
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        isEditGoalsActive = true
+                    }, label: {
+                        Text("Add Goals")
+                            .foregroundStyle(.black)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 20.0)
+                    })
+                    .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
+                    .padding(.top, 30)
+                    .padding(.bottom, 20)
+                } else {
                     HStack {
                         Text(goals.first!.targetGoal)
                             .bold()
@@ -152,25 +171,6 @@ struct GoalDataView: View {
                     })
                     .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                     .padding(.bottom, 10)
-                } else {
-                    Text("Please add goals data")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .bold()
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        isEditGoalsActive = true
-                    }, label: {
-                        Text("Add Goals")
-                            .foregroundStyle(.white)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 20.0)
-                    })
-                    .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                    .padding(.top, 30)
-                    .padding(.bottom, 20)
                 }
             }
         }

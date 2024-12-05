@@ -127,9 +127,11 @@ class AppData {
     }
     
     func calculateDefaultDailyCalories(goals: [GoalModel], dailyMenus: [DailyMenuModel]) -> Int {
-        guard  goals.first != nil else { return 0 }
+        guard  !goals.isEmpty else { return 0 }
         
-        if dailyMenus.count > 0 {
+        if dailyMenus.isEmpty {
+            return goals.first!.targetCalories
+        } else {
             var sumOfCaloriesForDaysWithMenu = 0
             
             for menu in dailyMenus {
@@ -141,8 +143,6 @@ class AppData {
             let calories = (totalCaloriesToTheEnd - sumOfCaloriesForDaysWithMenu) / (goals.first!.estimatedDays - dailyMenus.count)
             
             return calories
-        } else {
-            return goals.first!.targetCalories
         }
     }
     
@@ -157,14 +157,6 @@ class AppData {
             }
         }
     }
-    
-//    func setAllergens(allergens: AllergensList, completion: (Bool) -> Void) {
-//        _allergens = allergens
-//        
-//        JSONDataController.shared.saveAllergens(allergens: allergens) { isSaveSuccessful in
-//            completion(isSaveSuccessful)
-//        }
-//    }
     
     func generateDailyMenu(goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel) async throws -> RecipeDailyMenuData {
         

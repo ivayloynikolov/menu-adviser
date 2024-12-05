@@ -46,7 +46,7 @@ struct DailyMenuView: View {
                 Spacer()
             } else {
                 if dailyMenus.count < currentDay {
-                    Text("You don't have a menu generated for this day yet.")
+                    Text("There is no generated menu for this day yet.")
                         .multilineTextAlignment(.center)
                         .padding(.top, 30)
                     
@@ -156,7 +156,7 @@ struct DailyMenuView: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 30)
     }
 }
 

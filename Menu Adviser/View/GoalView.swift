@@ -15,7 +15,9 @@ struct GoalView: View {
     @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        if goals.first != nil {
+        if goals.isEmpty {
+            GoalEditView(isEditGoalsActive: $isEditGoalsActive)
+        } else {
             NavigationStack(path: $navigationPath) {
                 VStack {
                     GoalDataView(isEditGoalsActive: $isEditGoalsActive)
@@ -26,8 +28,6 @@ struct GoalView: View {
                     }
                 }
             }
-        } else {
-            GoalEditView(isEditGoalsActive: $isEditGoalsActive)
         }
     }
 }

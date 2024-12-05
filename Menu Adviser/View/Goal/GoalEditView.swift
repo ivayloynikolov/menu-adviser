@@ -72,11 +72,18 @@ struct GoalEditView: View {
         GeometryReader { geometry in
             VStack {
                 if users.isEmpty {
-                    Text("Please setup user data first!")
+                    Text("Goal")
+                        .font(.title)
+                    
+                    Spacer()
+                    
+                    Text("Please set up user data first!")
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                         .bold()
+                    
+                    Spacer()
                 } else {
-                    Text( goals.count > 0 ? "Edit Goal" : "Add Goal")
+                    Text( goals.isEmpty ? "Add Goal" : "Edit Goal")
                         .font(.title)
                     
                     Text("Goal")

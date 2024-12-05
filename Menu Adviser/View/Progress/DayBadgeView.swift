@@ -30,7 +30,7 @@ struct DayBadgeView: View {
     }
     
     var caloriesDiference: Int {
-        if goals.first != nil, hasGeneratedMenu {
+        if !goals.isEmpty, hasGeneratedMenu {
             return dailyMenus[currentDay - 1].calculatedDailyCalories - dailyMenus[currentDay - 1].menuCalories
         } else {
             return 0
