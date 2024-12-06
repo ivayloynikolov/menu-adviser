@@ -33,7 +33,7 @@ struct DailyMenuView: View {
                 .bold()
                 .font(.title)
                 .frame(alignment: .center)
-                .padding(.top, 30)
+                .padding(.top, 10)
             
             if isGeneratingInProgress {
                 Spacer()

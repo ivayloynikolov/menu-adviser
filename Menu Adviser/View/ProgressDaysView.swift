@@ -34,50 +34,48 @@ struct ProgressDaysView: View {
         
     var body: some View {
         NavigationStack(path: $navigationPath) {
-            GeometryReader { geometry in
-                VStack {
-                    Text("Progress")
-                        .font(.title)
-                    
-                    if goals.isEmpty {
-                        Text("Please set up your goal first!")
-                            .bold()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                            .multilineTextAlignment(.center)
-                    } else {
-                        ScrollView(.horizontal) {
-                            LazyHStack(spacing: spacingBetweenDayBadges) {
-                                ForEach(0..<goals.first!.estimatedDays, id: \.self) { index in
-                                    DayBadgeView(
-                                        frameWidth: calculateBadgeWidth(screenWidth: geometry.size.width),
-                                        currentDay: index + 1,
-                                        isSelected: index + 1 == selectedDay
-                                    )
-                                    .id(index + 1)
-                                    .onTapGesture {
-                                        selectedDay = index + 1
-                                    }
+            VStack {
+                Text("Progress")
+                    .font(.title)
+                
+                if goals.isEmpty {
+                    Text("Please set up your goal first!")
+                        .bold()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .multilineTextAlignment(.center)
+                } else {
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: spacingBetweenDayBadges) {
+                            ForEach(0..<goals.first!.estimatedDays, id: \.self) { index in
+                                DayBadgeView(
+                                    frameWidth: calculateBadgeWidth(screenWidth: UIScreen.main.bounds.width),
+                                    currentDay: index + 1,
+                                    isSelected: index + 1 == selectedDay
+                                )
+                                .id(index + 1)
+                                .onTapGesture {
+                                    selectedDay = index + 1
                                 }
                             }
-                            .scrollTargetLayout()
                         }
-                        .scrollTargetBehavior(.viewAligned)
-                        .padding(.horizontal, scrollViewPadding)
-                        .frame(maxHeight: 180, alignment: .top)
-                        .scrollPosition(id: $scrolledId)
-                        
-                        ProgressGraphicsView(currentDay: selectedDay, hasGeneratedMenu: menus.count > selectedDay - 1)
-                            .padding(.top, 20)
-                        
-                        DailyMenuView(currentDay: selectedDay)
-                            .frame(height: geometry.size.height * 0.5, alignment: .bottom)
+                        .scrollTargetLayout()
                     }
+                    .scrollTargetBehavior(.viewAligned)
+                    .padding(.horizontal, scrollViewPadding)
+                    .frame(maxHeight: 180, alignment: .top)
+                    .scrollPosition(id: $scrolledId)
+                    
+                    ProgressGraphicsView(currentDay: selectedDay)
+                        .padding(.top, 20)
+                    
+                    DailyMenuView(currentDay: selectedDay)
+                        .frame(height: UIScreen.main.bounds.height * 0.4, alignment: .bottom)
                 }
-                .frame(maxHeight: .infinity, alignment: .top)
-                .navigationDestination(isPresented: selectedRecipe.isRecipeSelected) {
-                    VStack {
-                        RecipeDetailsView()
-                    }
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .navigationDestination(isPresented: selectedRecipe.isRecipeSelected) {
+                VStack {
+                    RecipeDetailsView()
                 }
             }
         }
