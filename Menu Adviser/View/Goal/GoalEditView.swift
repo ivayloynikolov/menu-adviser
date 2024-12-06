@@ -25,6 +25,7 @@ struct GoalEditView: View {
     @State private var estimatedDays: Int = 0
     
     @State private var isAlertPresented = false
+    @State private var appDataError: AppDataError?
     
     func isInputDataValid() -> Bool {
         var isValid = false
@@ -210,6 +211,8 @@ struct GoalEditView: View {
                 
                 Button(action: {
                     if isInputDataValid() {
+                        appDataError = nil
+                        
                         if let goal = goals.first {
                             goal.targetGoal = targetGoal.rawValue
                             goal.targetActivity = targetActivity.rawValue
@@ -219,19 +222,29 @@ struct GoalEditView: View {
                             goal.estimatedDays = estimatedDays
                             goal.progressPace = progressPace.rawValue
                         } else {
-                            let newGoal = GoalModel(targetGoal: targetGoal.rawValue, targetWeight: targetWeight, targetCalories: targetCalories, targetBmi: targetBmi, estimatedDays: estimatedDays, targetActivity: targetActivity.rawValue, progressPace: progressPace.rawValue)
+                            let newGoal = GoalModel(
+                                targetGoal: targetGoal.rawValue,
+                                targetWeight: targetWeight,
+                                targetCalories: targetCalories,
+                                targetBmi: targetBmi,
+                                estimatedDays: estimatedDays,
+                                targetActivity: targetActivity.rawValue,
+                                progressPace: progressPace.rawValue
+                            )
                             
                             modelContext.insert(newGoal)
-                            
-                            do {
-                                try modelContext.save()
-                            } catch {
-                                print(error)
-                            }
                         }
                         
-                        isEditGoalsActive = false
+                        do {
+                            try modelContext.save()
+                            appDataError = nil
+                            isEditGoalsActive = false
+                        } catch {
+                            appDataError = .unsuccessfulSave
+                            isAlertPresented = true
+                        }
                     } else {
+                        appDataError = .invalidInput
                         isAlertPresented = true
                     }
                 }, label: {
@@ -244,12 +257,17 @@ struct GoalEditView: View {
                 .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                 .padding(.top, 30)
                 .padding(.bottom, 10)
-                .alert("Please fill all of the fields", isPresented: $isAlertPresented) {
-                    Button("OK", role: .cancel) { }
-                }
+                
             }
         }
         .padding(.horizontal, 30)
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
+        }
         .task {
             if let goal = goals.first {
                 targetGoal = GoalOptions(rawValue: goal.targetGoal) ?? .undefined

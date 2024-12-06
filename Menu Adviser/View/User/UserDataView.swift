@@ -15,101 +15,131 @@ struct UserDataView: View {
     
     @Binding var isEditUserActive: Bool
     
+    @State private var isEditAlertPresented = false
+    @State private var isDeleteAlertPresented = false
+    @State private var appDataError: AppDataError?
+    
     var body: some View {
         VStack {
-            Text("User data")
-                .font(.title)
-            
-            Text(users.first!.name)
-                .bold()
-                .font(.title)
-                .padding(.top, 20)
-            
-            Text("(\(users.first!.age) years)")
-                .font(.footnote)
-            
-            HStack {
-                Text("Sex")
-                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+            if !users.isEmpty {
+                Text("User data")
+                    .font(.title)
                 
-                Text(users.first!.sex)
+                Text(users.first!.name)
                     .bold()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .padding(.top, 10)
-            
-            HStack {
-                Text("Weight (kg.)")
-                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    .font(.title)
+                    .padding(.top, 20)
                 
-                Text(String(format: "%.2f", users.first!.weight))
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .padding(.top, 5)
-            
-            HStack {
-                Text("Height (cm.)")
-                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                Text("(\(users.first!.age) years)")
+                    .font(.footnote)
                 
-                Text("\(users.first!.height)")
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .padding(.top, 5)
-            
-            HStack {
-                Text("Activity")
-                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                HStack {
+                    Text("Sex")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(users.first!.sex)
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.top, 10)
                 
-                Text(users.first!.activity)
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            .padding(.top, 5)
-            
-            HStack {
-                Text("Current BMI")
-                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                HStack {
+                    Text("Weight (kg.)")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", users.first!.weight))
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.top, 5)
                 
-                Text(String(format: "%.2f", users.first!.currentBmi))
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                HStack {
+                    Text("Height (cm.)")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text("\(users.first!.height)")
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.top, 5)
+                
+                HStack {
+                    Text("Activity")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(users.first!.activity)
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.top, 5)
+                
+                HStack {
+                    Text("Current BMI")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", users.first!.currentBmi))
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.top, 5)
+                
+                Spacer()
+                
+                Button(action: {
+                    isEditUserActive = true
+                }, label: {
+                    Text("Edit User")
+                        .foregroundStyle(.black)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15.0)
+                })
+                .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
+                .padding(.top, 30)
+                
+                Button(action: {
+                    appDataError = .deleteUserWarning
+                    isDeleteAlertPresented = true
+                }, label: {
+                    Text("Delete User")
+                        .foregroundStyle(.black)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15.0)
+                })
+                .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
+                .padding(.bottom, 10)
             }
-            .padding(.top, 5)
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isEditAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isEditAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isDeleteAlertPresented) {
+            Button("Cancel", role: .cancel) {
+                isDeleteAlertPresented = false
+            }
             
-            Spacer()
-            
-            Button(action: {
-                isEditUserActive = true
-            }, label: {
-                Text("Edit User")
-                    .foregroundStyle(.black)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15.0)
-            })
-            .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-            .padding(.top, 30)
-            
-            Button(action: {
+            Button("Delete", role: .destructive) {
                 do {
                     try modelContext.delete(model: UserModel.self)
                     try modelContext.delete(model: GoalModel.self)
                     try modelContext.delete(model: DailyMenuModel.self)
                     try modelContext.save()
+                    
+                    appDataError = nil
+                    isDeleteAlertPresented = false
                 } catch {
-                    print(error)
+                    appDataError = .unsuccessfulDelete
+                    isDeleteAlertPresented = false
+                    isEditAlertPresented = true
                 }
-            }, label: {
-                Text("Delete User")
-                    .foregroundStyle(.black)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15.0)
-            })
-            .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-            .padding(.bottom, 10)
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
         }
         .padding(.horizontal, 30)
     }

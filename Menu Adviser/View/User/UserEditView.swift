@@ -15,6 +15,8 @@ struct UserEditView: View {
     
     @Query private var users: [UserModel]
     
+    @Binding var isEditUserActive: Bool
+    
     @State private var name: String = ""
     @State private var age: Int = 0
     @State private var sex: SexOptions = .undefined
@@ -24,6 +26,7 @@ struct UserEditView: View {
     @State private var currentBmi: Float = 0.0
     
     @State private var isAlertPresented = false
+    @State private var appDataError: AppDataError?
     
     func isInputDataValid() -> Bool {
         var isValid = false
@@ -142,6 +145,8 @@ struct UserEditView: View {
             
             Button(action: {
                 if isInputDataValid()  {
+                    appDataError = nil
+                    
                     if let user = users.first {
                         user.name = name
                         user.age = age
@@ -150,17 +155,28 @@ struct UserEditView: View {
                         user.height = height
                         user.activity = activity.rawValue
                     } else {
-                        let newUser = UserModel(name: name, age: age, sex: sex.rawValue, weight: weight, height: height, activity: activity.rawValue)
+                        let newUser = UserModel(
+                            name: name,
+                            age: age,
+                            sex: sex.rawValue,
+                            weight: weight,
+                            height: height,
+                            activity: activity.rawValue
+                        )
                         
                         modelContext.insert(newUser)
                     }
                     
                     do {
                         try modelContext.save()
+                        appDataError = nil
+                        isEditUserActive = false
                     } catch {
-                        print(error)
+                        appDataError = .unsuccessfulSave
+                        isAlertPresented = true
                     }
                 } else {
+                    appDataError = .invalidInput
                     isAlertPresented = true
                 }
             }, label: {
@@ -173,8 +189,12 @@ struct UserEditView: View {
             .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
             .padding(.top, 30)
             .padding(.bottom, 20)
-            .alert("Please fill all of the fields", isPresented: $isAlertPresented) {
-                Button("OK", role: .cancel) { }
+            .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isAlertPresented) {
+                Button("Ok", role: .cancel) {
+                    isAlertPresented = false
+                }
+            } message: {
+                Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
             }
         }
         .padding(.horizontal, 30)
@@ -195,6 +215,6 @@ struct UserEditView: View {
 
 #Preview {
     @Previewable @State var value: Bool = true
-    UserEditView()
+    UserEditView(isEditUserActive: $value)
         .modelContainer(for: UserModel.self, inMemory: true)
 }

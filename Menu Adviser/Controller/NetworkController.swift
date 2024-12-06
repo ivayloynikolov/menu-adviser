@@ -7,13 +7,6 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case invalidURL
-    case invalidResponse
-    case noData
-    case decodeError(message: String, error: Error?)
-}
-
 class NetworkController {
     static let shared = NetworkController()
     

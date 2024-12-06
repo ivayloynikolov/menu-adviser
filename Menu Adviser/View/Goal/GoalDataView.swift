@@ -16,6 +16,10 @@ struct GoalDataView: View {
     
     @Binding var isEditGoalsActive: Bool
     
+    @State private var isEditAlertPresented = false
+    @State private var isDeleteAlertPresented = false
+    @State private var appDataError: AppDataError?
+    
     var body: some View {
         VStack {
             Text("Goal")
@@ -154,13 +158,8 @@ struct GoalDataView: View {
                 .padding(.top, 30)
                 
                 Button(action: {
-                    do {
-                        try modelContext.delete(model: GoalModel.self)
-                        try modelContext.delete(model: DailyMenuModel.self)
-                        try modelContext.save()
-                    } catch {
-                        print(error)
-                    }
+                    appDataError = .deleteGoalWarning
+                    isDeleteAlertPresented = true
                 }, label: {
                     Text("Delete Goals")
                         .foregroundStyle(.black)
@@ -171,6 +170,35 @@ struct GoalDataView: View {
                 .background(.red, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
                 .padding(.bottom, 10)
             }
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isEditAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isEditAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isDeleteAlertPresented) {
+            Button("Cancel", role: .cancel) {
+                isDeleteAlertPresented = false
+            }
+            
+            Button("Delete", role: .destructive) {
+                do {
+                    try modelContext.delete(model: GoalModel.self)
+                    try modelContext.delete(model: DailyMenuModel.self)
+                    try modelContext.save()
+                    
+                    appDataError = nil
+                    isDeleteAlertPresented = false
+                } catch {
+                    appDataError = .unsuccessfulDelete
+                    isDeleteAlertPresented = false
+                    isEditAlertPresented = true
+                }
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
         }
         .padding(.horizontal, 30)
     }

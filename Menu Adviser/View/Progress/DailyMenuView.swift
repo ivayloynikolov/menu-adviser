@@ -18,8 +18,10 @@ struct DailyMenuView: View {
     @Query private var preferences: [MenuPreferencesModel]
     
     @State private var isGeneratingInProgress: Bool = false
-    @State private var isAlertPresented: Bool = false
-    @State private var errorMessage: String = ""
+    @State private var isEditAlertPresented: Bool = false
+    @State private var isNetworkAlertPresented: Bool = false
+    @State private var appDataError: AppDataError?
+    @State private var networkError: NetworkError?
     
     let currentDay: Int
     
@@ -70,8 +72,6 @@ struct DailyMenuView: View {
                                         preferences: preferences.first!
                                     )
                                     
-                                    errorMessage = ""
-                                    
                                     let dailyMenu = DailyMenuModel(
                                         id: currentDay,
                                         breakfast: recipeDailyMenuData.breakfast,
@@ -88,22 +88,12 @@ struct DailyMenuView: View {
                                     do {
                                         try modelContext.save()
                                     } catch {
-                                        print(error)
+                                        appDataError = .unsuccessfulSave
+                                        isEditAlertPresented = true
                                     }
-                                } catch let networkError as NetworkError {
-                                    
-                                    switch networkError {
-                                    case .decodeError(let message, _):
-                                        errorMessage = message
-                                    case .invalidResponse:
-                                        errorMessage = "Invalid Response!"
-                                    case .invalidURL:
-                                        errorMessage = "Invalid URL!"
-                                    case .noData:
-                                        errorMessage = "No Data!"
-                                    }
-                                    
-                                    isAlertPresented = true
+                                } catch let error as NetworkError {
+                                    networkError = error
+                                    isNetworkAlertPresented = true
                                 }
                             }
                         }, label: {
@@ -115,9 +105,6 @@ struct DailyMenuView: View {
                         })
                         .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(isEnabled ? 0.7 : 0.2)
                         .padding(.bottom, 10)
-                        .alert("Error getting data from server", isPresented: $isAlertPresented) {
-                            Button("OK", role: .cancel) { }
-                        }
                     }
                 } else {
                     ScrollView(.vertical) {
@@ -154,6 +141,20 @@ struct DailyMenuView: View {
                     }
                 }
             }
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isEditAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isEditAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
+        }
+        .alert(Text(networkError?.failureReason ?? ""), isPresented: $isNetworkAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isNetworkAlertPresented = false
+            }
+        } message: {
+            Text("\n\(networkError?.recoverySuggestion ?? "") \n\n\(networkError?.errorDescription ?? "")")
         }
         .padding(.horizontal, 30)
     }

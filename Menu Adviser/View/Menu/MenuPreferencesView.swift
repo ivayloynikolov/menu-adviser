@@ -18,11 +18,15 @@ struct MenuPreferencesView: View {
     @State private var isVegetarian: Bool = false
     @State private var allergens: [AllergenData] = []
     
+    @State private var isAlertPresented = false
+    @State private var appDataError: AppDataError?
+    
     func saveContext() {
         do {
             try modelContext.save()
         } catch {
-            print(error)
+            appDataError = .unsuccessfulSave
+            isAlertPresented = true
         }
     }
     
@@ -70,6 +74,13 @@ struct MenuPreferencesView: View {
                 
                 saveContext()
             }
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
         }
         .task {
             if menuPreferences.isEmpty {

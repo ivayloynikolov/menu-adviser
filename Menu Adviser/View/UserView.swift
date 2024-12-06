@@ -18,7 +18,7 @@ struct UserView: View {
     var body: some View {
         if users.isEmpty {
             if isOnboardingPresented {
-                UserEditView()
+                UserEditView(isEditUserActive: $isEditUserActive)
             } else {
                 UserOnboardingView(isOnboardingPresented: $isOnboardingPresented)
             }
@@ -29,7 +29,7 @@ struct UserView: View {
                 }
                 .navigationDestination(isPresented: $isEditUserActive) {
                     VStack {
-                        UserEditView()
+                        UserEditView(isEditUserActive: $isEditUserActive)
                     }
                 }
             }
