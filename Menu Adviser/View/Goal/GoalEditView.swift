@@ -56,7 +56,6 @@ struct GoalEditView: View {
             targetCalories = users.first!.currentDailyCalories
         case .gainWeight:
             targetCalories = users.first!.currentDailyCalories + progressPace.caloriesCompensation
-            // case for .undefined or .stayFit
         default:
             targetCalories = 0
         }

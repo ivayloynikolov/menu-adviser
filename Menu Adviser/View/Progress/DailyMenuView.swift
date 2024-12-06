@@ -74,11 +74,10 @@ struct DailyMenuView: View {
                                     
                                     let dailyMenu = DailyMenuModel(
                                         id: currentDay,
-                                        // breakfast, lunch, snack and dinner are confirmed as not nil in AppData
-                                        breakfast: recipeDailyMenuData.breakfast!,
-                                        lunch: recipeDailyMenuData.lunch!,
-                                        snack: recipeDailyMenuData.snack!,
-                                        dinner: recipeDailyMenuData.dinner!,
+                                        breakfast: recipeDailyMenuData.breakfast,
+                                        lunch: recipeDailyMenuData.lunch,
+                                        snack: recipeDailyMenuData.snack,
+                                        dinner: recipeDailyMenuData.dinner,
                                         calculatedDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)
                                     )
                                     

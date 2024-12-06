@@ -18,10 +18,6 @@
 		B044206A2CD8D73A00F6A9F9 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04420692CD8D73A00F6A9F9 /* ProgressBarView.swift */; };
 		B044206C2CD92BA200F6A9F9 /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B044206B2CD92BA200F6A9F9 /* NetworkController.swift */; };
 		B04420772CD92CBC00F6A9F9 /* allergens.json in Resources */ = {isa = PBXBuildFile; fileRef = B044206D2CD92CBC00F6A9F9 /* allergens.json */; };
-		B044207F2CDA4DD600F6A9F9 /* breakfast.json in Resources */ = {isa = PBXBuildFile; fileRef = B044207B2CDA4DD600F6A9F9 /* breakfast.json */; };
-		B04420802CDA4DD600F6A9F9 /* lunch.json in Resources */ = {isa = PBXBuildFile; fileRef = B044207D2CDA4DD600F6A9F9 /* lunch.json */; };
-		B04420812CDA4DD600F6A9F9 /* snack.json in Resources */ = {isa = PBXBuildFile; fileRef = B044207E2CDA4DD600F6A9F9 /* snack.json */; };
-		B04420822CDA4DD600F6A9F9 /* dinner.json in Resources */ = {isa = PBXBuildFile; fileRef = B044207C2CDA4DD600F6A9F9 /* dinner.json */; };
 		B04420852CDA87E900F6A9F9 /* AllergensData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04420842CDA87E900F6A9F9 /* AllergensData.swift */; };
 		B04420872CDCF42400F6A9F9 /* MenuPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04420862CDCF42400F6A9F9 /* MenuPreferencesModel.swift */; };
 		B0547D902CC3C60D005AFFFD /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */; };
@@ -58,10 +54,6 @@
 		B04420692CD8D73A00F6A9F9 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		B044206B2CD92BA200F6A9F9 /* NetworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
 		B044206D2CD92CBC00F6A9F9 /* allergens.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = allergens.json; sourceTree = "<group>"; };
-		B044207B2CDA4DD600F6A9F9 /* breakfast.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = breakfast.json; sourceTree = "<group>"; };
-		B044207C2CDA4DD600F6A9F9 /* dinner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dinner.json; sourceTree = "<group>"; };
-		B044207D2CDA4DD600F6A9F9 /* lunch.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lunch.json; sourceTree = "<group>"; };
-		B044207E2CDA4DD600F6A9F9 /* snack.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snack.json; sourceTree = "<group>"; };
 		B04420842CDA87E900F6A9F9 /* AllergensData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllergensData.swift; sourceTree = "<group>"; };
 		B04420862CDCF42400F6A9F9 /* MenuPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPreferencesModel.swift; sourceTree = "<group>"; };
 		B0547D8F2CC3C60D005AFFFD /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
@@ -109,17 +101,6 @@
 				B03637152CDD0FA100E44FE6 /* RecipeDetailsView.swift */,
 			);
 			path = Progress;
-			sourceTree = "<group>";
-		};
-		B04420832CDA4DE200F6A9F9 /* apiMock */ = {
-			isa = PBXGroup;
-			children = (
-				B044207B2CDA4DD600F6A9F9 /* breakfast.json */,
-				B044207C2CDA4DD600F6A9F9 /* dinner.json */,
-				B044207D2CDA4DD600F6A9F9 /* lunch.json */,
-				B044207E2CDA4DD600F6A9F9 /* snack.json */,
-			);
-			path = apiMock;
 			sourceTree = "<group>";
 		};
 		B0547D912CC3C682005AFFFD /* User */ = {
@@ -219,7 +200,6 @@
 		B082D21C2CBAC1320014F4C9 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				B04420832CDA4DE200F6A9F9 /* apiMock */,
 				B044206D2CD92CBC00F6A9F9 /* allergens.json */,
 				B04420842CDA87E900F6A9F9 /* AllergensData.swift */,
 				B082D2252CBACC080014F4C9 /* RecipeData.swift */,
@@ -299,10 +279,6 @@
 				B04420772CD92CBC00F6A9F9 /* allergens.json in Resources */,
 				B082D1F72CB2E4840014F4C9 /* Launch Screen.storyboard in Resources */,
 				B082D1E42CB2DD690014F4C9 /* Preview Assets.xcassets in Resources */,
-				B044207F2CDA4DD600F6A9F9 /* breakfast.json in Resources */,
-				B04420802CDA4DD600F6A9F9 /* lunch.json in Resources */,
-				B04420812CDA4DD600F6A9F9 /* snack.json in Resources */,
-				B04420822CDA4DD600F6A9F9 /* dinner.json in Resources */,
 				B082D1E12CB2DD690014F4C9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

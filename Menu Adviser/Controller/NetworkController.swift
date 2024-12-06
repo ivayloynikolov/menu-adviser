@@ -17,22 +17,11 @@ enum NetworkError: Error {
 class NetworkController {
     static let shared = NetworkController()
     
-//    let SERVER_URL: String = "http://192.168.1.112:3000/menuadviser/recipeByNutrients"
     let SERVER_URL: String = "https://betterme-api.a-pps.net/menuadviser/recipeByNutrients"
     
     private init() {}
     
-    func getRecipeData(recipeRequestData: RecipeRequestData, completion: (RecipeResponseData?) -> Void) {
-        
-        // TODO: replace with real api request
-        JSONDataController.shared.getMockRecipe(recipeRequestData: recipeRequestData, completion: { response in
-            completion(response)
-        })
-    }
-    
     func getRecipeDataFromServer(recipeRequestData: RecipeRequestData) async throws -> RecipeResponseData {
-        
-        // TODO: find a better way to construct query items
         let queryItems = [
             URLQueryItem(name: "recipeTypes", value: recipeRequestData.recipeTypes),
             URLQueryItem(name: "caloriesFrom", value: String(recipeRequestData.caloriesFrom)),
