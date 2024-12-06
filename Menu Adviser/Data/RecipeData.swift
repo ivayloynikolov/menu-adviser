@@ -8,21 +8,18 @@
 import Foundation
 
 
-class RecipeDailyMenuData: Codable {
-    var breakfast: RecipeResponseData?
-    var lunch: RecipeResponseData?
-    var snack: RecipeResponseData?
-    var dinner: RecipeResponseData?
+struct RecipeDailyMenuData: Codable {
+    var breakfast: RecipeResponseData
+    var lunch: RecipeResponseData
+    var snack: RecipeResponseData
+    var dinner: RecipeResponseData
     
-    var isComplete: Bool {
-        if breakfast != nil && lunch != nil && snack != nil && dinner != nil {
-            return true
-        } else {
-            return false
-        }
+    init(breakfast: RecipeResponseData, lunch: RecipeResponseData, snack: RecipeResponseData, dinner: RecipeResponseData) {
+        self.breakfast = breakfast
+        self.lunch = lunch
+        self.snack = snack
+        self.dinner = dinner
     }
-    
-    init() {}
 }
 
 struct RecipeRequestData: Codable {

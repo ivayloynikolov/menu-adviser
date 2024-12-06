@@ -160,24 +160,27 @@ class AppData {
     
     func generateDailyMenu(goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel) async throws -> RecipeDailyMenuData {
         
-        let recipeDailyMenuData = RecipeDailyMenuData()
+        var breakfastData: RecipeResponseData?
+        var lunchData: RecipeResponseData?
+        var snackData: RecipeResponseData?
+        var dinnerData: RecipeResponseData?
         
         for type in RecipeTypes.allCases {
             do {
                 let responseData = try await requestRecipeFromServer(recipeType: type, goal: goal, defaultDailyCalories: defaultDailyCalories, preferences: preferences)
                 
                 switch type {
-                case .breakfast: recipeDailyMenuData.breakfast = responseData
-                case .lunch: recipeDailyMenuData.lunch = responseData
-                case .snack: recipeDailyMenuData.snack = responseData
-                case .dinner: recipeDailyMenuData.dinner = responseData
+                case .breakfast: breakfastData = responseData
+                case .lunch: lunchData = responseData
+                case .snack: snackData = responseData
+                case .dinner: dinnerData = responseData
                 }
             } catch let networkError {
                 throw networkError
             }
         }
         
-        return recipeDailyMenuData
+        return RecipeDailyMenuData(breakfast: breakfastData!, lunch: lunchData!, snack: snackData!, dinner: dinnerData!)
     }
     
     func requestRecipeFromServer(recipeType: RecipeTypes, goal: GoalModel, defaultDailyCalories: Int, preferences: MenuPreferencesModel) async throws -> RecipeResponseData {
