@@ -126,7 +126,7 @@ struct GoalEditView: View {
                         .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                     
                     TextField("", value: $targetWeight, formatter: NumberFormatter())
-                        .keyboardType(.numberPad)
+                        .keyboardType(.numbersAndPunctuation)
                         .autocorrectionDisabled()
                         .frame(maxWidth: .infinity, minHeight: 30.0)
                         .padding(.horizontal, 5)

@@ -11,6 +11,7 @@ import SwiftData
 struct ProgressDaysView: View {
     
     @Environment(\.selectedRecipe) var selectedRecipe
+    @Environment(\.networkMonitor) var networkMonitor
     
     @Query private var menus: [DailyMenuModel]
     @Query private var goals: [GoalModel]
@@ -20,6 +21,9 @@ struct ProgressDaysView: View {
     
     @State private var selectedDay: Int = 1
     @State private var scrolledId: Int?
+    
+    @State private var isAlertPresented = false
+    @State private var networkError: NetworkError?
     
     let scrollViewPadding: CGFloat = 20.0
     let spacingBetweenDayBadges: CGFloat = 20.0
@@ -78,6 +82,28 @@ struct ProgressDaysView: View {
                     RecipeDetailsView()
                 }
             }
+        }
+        .onAppear {
+            networkMonitor.startMonitoring()
+        }
+        .onDisappear {
+            networkMonitor.stopMonitoring()
+        }
+        .onChange(of: networkMonitor.isConnected) {
+            if networkMonitor.isConnected {
+                networkError = nil
+                isAlertPresented = false
+            } else {
+                networkError = .noConnection
+                isAlertPresented = true
+            }
+        }
+        .alert(Text(networkError?.failureReason ?? ""), isPresented: $isAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isAlertPresented = false
+            }
+        } message: {
+            Text("\n\(networkError?.recoverySuggestion ?? "") \n\n\(networkError?.errorDescription ?? "")")
         }
         .task {
             selectedDay = menus.isEmpty ? 1 : menus.count

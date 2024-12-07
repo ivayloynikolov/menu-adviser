@@ -12,6 +12,7 @@ struct ContentView: View {
     @AppStorage("selectedTab") private var selectedTab = 0
     
     @State private var selectedRecipe = SelectedRecipe()
+    @State private var networkMonitor = NetworkMonitor()
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -41,6 +42,7 @@ struct ContentView: View {
             
             ProgressDaysView()
                 .environment(\.selectedRecipe, selectedRecipe)
+                .environment(\.networkMonitor, networkMonitor)
                 .tag(3)
                 .tabItem {
                     Image(systemName: "trophy.fill")
@@ -57,4 +59,5 @@ struct ContentView: View {
 
 extension EnvironmentValues {
     @Entry var selectedRecipe: SelectedRecipe = SelectedRecipe()
+    @Entry var networkMonitor: NetworkMonitor = NetworkMonitor()
 }

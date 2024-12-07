@@ -10,8 +10,11 @@ import SwiftUI
 struct RecipeMealRowView: View {
     
     @Environment(\.selectedRecipe) var selectedRecipe
+    @Environment(\.networkMonitor) var networkMonitor
     
     let recipeData: RecipeResponseData
+    
+    @State private var refreshImage = false
     
     var body: some View {
         HStack {
@@ -44,10 +47,15 @@ struct RecipeMealRowView: View {
                     .resizable()
                     .scaledToFill()
             } placeholder: {
-                Color.gray
+                refreshImage ? Color.gray : Color.gray
             }
             .frame(width: 50, height: 50)
             .clipShape(.rect(cornerRadius: 15))
+        }
+        .onChange(of: networkMonitor.isConnected) {
+            if networkMonitor.isConnected {
+                refreshImage.toggle()
+            }
         }
         .onTapGesture {
             selectedRecipe.recipeData = recipeData
@@ -56,6 +64,21 @@ struct RecipeMealRowView: View {
 }
 
 #Preview {
-    @Previewable @State var value = RecipeResponseData(recipeId: "id", recipeName: "name", recipeDescription: "description", recipeImage: "image", recipeIngredients: ["ingredient"], recipeNutrition: RecipeNutrition(calories: 1, fat: 1, carb: 1, protein: 1), recipeType: ["type"], directions: ["direction"], preparationTimeMin: "20 min")
+    @Previewable @State var value = RecipeResponseData(
+        recipeId: "id",
+        recipeName: "name",
+        recipeDescription: "description",
+        recipeImage: "image",
+        recipeIngredients: ["ingredient"],
+        recipeNutrition: RecipeNutrition(
+            calories: 1,
+            fat: 1,
+            carb: 1,
+            protein: 1
+        ),
+        recipeType: ["type"],
+        directions: ["direction"],
+        preparationTimeMin: "20 min"
+    )
     RecipeMealRowView(recipeData: value)
 }

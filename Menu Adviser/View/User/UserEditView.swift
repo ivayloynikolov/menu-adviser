@@ -68,7 +68,7 @@ struct UserEditView: View {
                     .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                 
                 TextField("", value: $age, formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
+                    .keyboardType(.numbersAndPunctuation)
                     .autocorrectionDisabled()
                     .frame(maxWidth: .infinity, minHeight: 30.0)
                     .padding(.horizontal, 5)
@@ -92,7 +92,7 @@ struct UserEditView: View {
                     .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                 
                 TextField("", value: $weight, formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
+                    .keyboardType(.numbersAndPunctuation)
                     .autocorrectionDisabled()
                     .frame(maxWidth: .infinity, minHeight: 30.0)
                     .padding(.horizontal, 5)
@@ -108,7 +108,7 @@ struct UserEditView: View {
                     .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                 
                 TextField("", value: $height, formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
+                    .keyboardType(.numbersAndPunctuation)
                     .autocorrectionDisabled()
                     .frame(maxWidth: .infinity, minHeight: 30.0)
                     .padding(.horizontal, 5)

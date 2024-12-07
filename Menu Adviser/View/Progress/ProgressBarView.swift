@@ -50,7 +50,7 @@ struct ProgressBarView: View {
                     Color.gray
                         .opacity(0.3)
                         .cornerRadius(25)
-                        .frame(maxWidth: .infinity, maxHeight: 10.0)
+                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8 - 70.0, maxHeight: 10.0)
                     
                     Color.green
                         .opacity(0.8)
@@ -58,7 +58,7 @@ struct ProgressBarView: View {
                         .frame(width: progressWidth, height: 10.0)
                         .onChange(of: currentDay) {
                             withAnimation(.easeOut(duration: 0.5)) {
-                                progressWidth = calculateProgressBarWidth(totalBarWidth: UIScreen.main.bounds.width * 0.8)
+                                progressWidth = calculateProgressBarWidth(totalBarWidth: UIScreen.main.bounds.width * 0.8 - 70.0)
                             }
                         }
                 }

@@ -50,6 +50,7 @@ enum NetworkError: Error {
     case invalidResponse
     case noData
     case decodeError(message: String, error: Error?)
+    case noConnection
     
     var failureReason: String? {
         switch self {
@@ -57,6 +58,7 @@ enum NetworkError: Error {
         case .invalidResponse: return "Invalid response"
         case .noData: return "No data"
         case .decodeError: return "Decoding error"
+        case .noConnection: return "Network error"
         }
     }
     
@@ -66,6 +68,7 @@ enum NetworkError: Error {
         case .invalidResponse: return "Please, check your goal data and try again"
         case .noData: return "Please, check your goal data and try again"
         case .decodeError: return "Please, check your goal data and try again"
+        case .noConnection: return "Please try again later"
         }
     }
     
@@ -75,6 +78,7 @@ enum NetworkError: Error {
         case .invalidResponse: return "Received response is invalid"
         case .noData: return "There is no data recieved"
         case .decodeError(let message, _): return message
+        case .noConnection: return "Your device is not connected to the internet"
         }
     }
 }

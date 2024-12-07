@@ -11,6 +11,7 @@ import SwiftData
 struct DailyMenuView: View {
     
     @Environment(\.modelContext) var modelContext
+    @Environment(\.networkMonitor) var networkMonitor
     
     @Query private var dailyMenus: [DailyMenuModel]
     @Query private var users: [UserModel]
@@ -59,42 +60,47 @@ struct DailyMenuView: View {
                     
                     if isEnabled {
                         Button(action: {
-                            isGeneratingInProgress = true
-                            
-                            Task {
-                                do {
-                                    let recipeDailyMenuData = try await AppData.shared.generateDailyMenu(
-                                        goal: goals.first!,
-                                        defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(
-                                            goals: goals,
-                                            dailyMenus: dailyMenus
-                                        ),
-                                        preferences: preferences.first!
-                                    )
-                                    
-                                    let dailyMenu = DailyMenuModel(
-                                        id: currentDay,
-                                        breakfast: recipeDailyMenuData.breakfast,
-                                        lunch: recipeDailyMenuData.lunch,
-                                        snack: recipeDailyMenuData.snack,
-                                        dinner: recipeDailyMenuData.dinner,
-                                        calculatedDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)
-                                    )
-                                    
-                                    isGeneratingInProgress = false
-                                    
-                                    modelContext.insert(dailyMenu)
-                                    
+                            if networkMonitor.isConnected {
+                                isGeneratingInProgress = true
+                                
+                                Task {
                                     do {
-                                        try modelContext.save()
-                                    } catch {
-                                        appDataError = .unsuccessfulSave
-                                        isEditAlertPresented = true
+                                        let recipeDailyMenuData = try await AppData.shared.generateDailyMenu(
+                                            goal: goals.first!,
+                                            defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(
+                                                goals: goals,
+                                                dailyMenus: dailyMenus
+                                            ),
+                                            preferences: preferences.first!
+                                        )
+                                        
+                                        let dailyMenu = DailyMenuModel(
+                                            id: currentDay,
+                                            breakfast: recipeDailyMenuData.breakfast,
+                                            lunch: recipeDailyMenuData.lunch,
+                                            snack: recipeDailyMenuData.snack,
+                                            dinner: recipeDailyMenuData.dinner,
+                                            calculatedDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)
+                                        )
+                                        
+                                        isGeneratingInProgress = false
+                                        
+                                        modelContext.insert(dailyMenu)
+                                        
+                                        do {
+                                            try modelContext.save()
+                                        } catch {
+                                            appDataError = .unsuccessfulSave
+                                            isEditAlertPresented = true
+                                        }
+                                    } catch let error as NetworkError {
+                                        networkError = error
+                                        isNetworkAlertPresented = true
                                     }
-                                } catch let error as NetworkError {
-                                    networkError = error
-                                    isNetworkAlertPresented = true
                                 }
+                            } else {
+                                networkError = .noConnection
+                                isNetworkAlertPresented = true
                             }
                         }, label: {
                             Text("Generate Daily Menu")
@@ -152,6 +158,7 @@ struct DailyMenuView: View {
         .alert(Text(networkError?.failureReason ?? ""), isPresented: $isNetworkAlertPresented) {
             Button("Ok", role: .cancel) {
                 isNetworkAlertPresented = false
+                isGeneratingInProgress = false
             }
         } message: {
             Text("\n\(networkError?.recoverySuggestion ?? "") \n\n\(networkError?.errorDescription ?? "")")
