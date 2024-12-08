@@ -10,6 +10,9 @@ import SwiftUI
 struct RecipeDetailsView: View {
     
     @Environment(\.selectedRecipe) var selectedRecipe
+    @Environment(\.networkMonitor) var networkMonitor
+    
+    @State private var refreshId = UUID()
     
     var body: some View {
         ScrollView {
@@ -60,6 +63,7 @@ struct RecipeDetailsView: View {
                             }
                             .frame(width: UIScreen.main.bounds.width * 0.4, height: UIScreen.main.bounds.width * 0.4)
                             .clipShape(.rect(cornerRadius: 25))
+                            .id(refreshId)
                             
                             Text("Preparing time:")
                                 .bold()
@@ -89,6 +93,11 @@ struct RecipeDetailsView: View {
                     }
                 }
                 .padding(.horizontal, 30)
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        refreshId = UUID()
+                    }
+                }
             }
         }
     }

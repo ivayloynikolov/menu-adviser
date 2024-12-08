@@ -14,7 +14,7 @@ struct RecipeMealRowView: View {
     
     let recipeData: RecipeResponseData
     
-    @State private var refreshImage = false
+    @State private var refreshId = UUID()
     
     var body: some View {
         HStack {
@@ -47,14 +47,15 @@ struct RecipeMealRowView: View {
                     .resizable()
                     .scaledToFill()
             } placeholder: {
-                refreshImage ? Color.gray : Color.gray
+                Color.gray
             }
             .frame(width: 50, height: 50)
             .clipShape(.rect(cornerRadius: 15))
+            .id(refreshId)
         }
         .onChange(of: networkMonitor.isConnected) {
             if networkMonitor.isConnected {
-                refreshImage.toggle()
+                refreshId = UUID()
             }
         }
         .onTapGesture {
