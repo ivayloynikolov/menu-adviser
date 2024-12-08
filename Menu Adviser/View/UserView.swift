@@ -12,21 +12,27 @@ struct UserView: View {
     @Query var users: [UserModel]
     
     @State var isEditUserActive: Bool = false
+    @State var isOnboardingPresented: Bool = false
     @State private var navigationPath = NavigationPath()
     
     var body: some View {
-        NavigationStack(path: $navigationPath) {
-            VStack {
-                UserDataView(isEditUserActive: $isEditUserActive)
+        if users.isEmpty {
+            if isOnboardingPresented {
+                UserEditView(isEditUserActive: $isEditUserActive)
+            } else {
+                UserOnboardingView(isOnboardingPresented: $isOnboardingPresented)
             }
-            .navigationDestination(isPresented: $isEditUserActive) {
+        } else {
+            NavigationStack(path: $navigationPath) {
                 VStack {
-                    UserEditView(isEditUserActive: $isEditUserActive)
+                    UserDataView(isEditUserActive: $isEditUserActive)
+                }
+                .navigationDestination(isPresented: $isEditUserActive) {
+                    VStack {
+                        UserEditView(isEditUserActive: $isEditUserActive)
+                    }
                 }
             }
-        }
-        .task {
-            isEditUserActive = users.count == 0
         }
     }
 }

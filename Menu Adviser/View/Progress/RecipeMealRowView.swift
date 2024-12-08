@@ -10,8 +10,11 @@ import SwiftUI
 struct RecipeMealRowView: View {
     
     @Environment(\.selectedRecipe) var selectedRecipe
+    @Environment(\.networkMonitor) var networkMonitor
     
     let recipeData: RecipeResponseData
+    
+    @State private var refreshId = UUID()
     
     var body: some View {
         HStack {
@@ -22,15 +25,19 @@ struct RecipeMealRowView: View {
                 HStack {
                     Text("calories: \(recipeData.recipeNutrition.calories)")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("fat: \(String(format: "%.2f", recipeData.recipeNutrition.fat))")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("carb: \(String(format: "%.2f", recipeData.recipeNutrition.carb))")
                         .font(.caption)
+                        .lineLimit(1)
                     
                     Text("protein: \(String(format: "%.2f", recipeData.recipeNutrition.protein))")
                         .font(.caption)
+                        .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -44,6 +51,12 @@ struct RecipeMealRowView: View {
             }
             .frame(width: 50, height: 50)
             .clipShape(.rect(cornerRadius: 15))
+            .id(refreshId)
+        }
+        .onChange(of: networkMonitor.isConnected) {
+            if networkMonitor.isConnected {
+                refreshId = UUID()
+            }
         }
         .onTapGesture {
             selectedRecipe.recipeData = recipeData
@@ -52,6 +65,21 @@ struct RecipeMealRowView: View {
 }
 
 #Preview {
-    @Previewable @State var value = RecipeResponseData(recipeId: "id", recipeName: "name", recipeDescription: "description", recipeImage: "image", recipeIngredients: ["ingredient"], recipeNutrition: RecipeNutrition(calories: 1, fat: 1, carb: 1, protein: 1), recipeType: ["type"], directions: ["direction"], preparationTimeMin: "20 min")
+    @Previewable @State var value = RecipeResponseData(
+        recipeId: "id",
+        recipeName: "name",
+        recipeDescription: "description",
+        recipeImage: "image",
+        recipeIngredients: ["ingredient"],
+        recipeNutrition: RecipeNutrition(
+            calories: 1,
+            fat: 1,
+            carb: 1,
+            protein: 1
+        ),
+        recipeType: ["type"],
+        directions: ["direction"],
+        preparationTimeMin: "20 min"
+    )
     RecipeMealRowView(recipeData: value)
 }

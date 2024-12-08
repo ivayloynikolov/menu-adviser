@@ -10,13 +10,12 @@ import SwiftData
 
 @Model
 class MenuPreferencesModel: Identifiable {
-    var id: UUID
+    var id: UUID = UUID()
     var allergens: [AllergenData]
     var isVegan: Bool
     var isVegetarian: Bool
     
-    init(id: UUID = UUID(), allergens: [AllergenData], isVegan: Bool, isVegetarian: Bool) {
-        self.id = id
+    init(allergens: [AllergenData], isVegan: Bool, isVegetarian: Bool) {
         self.allergens = allergens
         self.isVegan = isVegan
         self.isVegetarian = isVegetarian
