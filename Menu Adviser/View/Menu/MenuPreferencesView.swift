@@ -87,6 +87,8 @@ struct MenuPreferencesView: View {
                 AppData.shared.getAllergens { allergensList in
                     if let data = allergensList {
                         allergens = data.allergens
+                        isVegan = false
+                        isVegetarian = false
                         
                         let preferences = MenuPreferencesModel(allergens: allergens, isVegan: isVegan, isVegetarian: isVegetarian)
                         

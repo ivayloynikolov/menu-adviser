@@ -127,6 +127,7 @@ struct UserDataView: View {
                 do {
                     try modelContext.delete(model: UserModel.self)
                     try modelContext.delete(model: GoalModel.self)
+                    try modelContext.delete(model: MenuPreferencesModel.self)
                     try modelContext.delete(model: DailyMenuModel.self)
                     try modelContext.save()
                     
