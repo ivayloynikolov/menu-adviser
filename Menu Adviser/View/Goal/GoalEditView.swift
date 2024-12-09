@@ -30,9 +30,14 @@ struct GoalEditView: View {
     func isInputDataValid() -> Bool {
         var isValid = false
         
-        if targetGoal != .undefined &&
-            targetActivity != .undefined &&
-            targetWeight > 0 &&
+        if (targetGoal == .weightLoss &&
+            targetWeight < users.first!.weight ||
+            targetGoal == .gainWeight &&
+            targetWeight > users.first!.weight ||
+            targetGoal == .stayFit &&
+            targetWeight == users.first!.weight) &&
+            targetWeight > 30 &&
+            targetWeight < 250 &&
             targetCalories > 0 &&
             targetBmi > 0 &&
             estimatedDays > 0 {
@@ -55,6 +60,7 @@ struct GoalEditView: View {
             targetCalories = users.first!.currentDailyCalories - progressPace.caloriesCompensation
         case .stayFit:
             targetCalories = users.first!.currentDailyCalories
+            targetWeight = users.first!.weight
         case .gainWeight:
             targetCalories = users.first!.currentDailyCalories + progressPace.caloriesCompensation
         default:

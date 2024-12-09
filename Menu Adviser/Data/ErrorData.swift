@@ -26,7 +26,7 @@ enum AppDataError: Error, LocalizedError {
     
     var recoverySuggestion: String? {
         switch self {
-        case .invalidInput: return "Please, fill all of the available fields"
+        case .invalidInput: return "Please, check your input values"
         case .unsuccessfulSave: return "Please, try again"
         case .unsuccessfulDelete: return "Please, try again"
         case .deleteUserWarning: return "Deleting user will also delete goals and generated menus!"

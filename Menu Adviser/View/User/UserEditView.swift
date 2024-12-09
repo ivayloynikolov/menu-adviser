@@ -32,10 +32,13 @@ struct UserEditView: View {
         var isValid = false
         
         if name != "" &&
-            age > 0 &&
+            age > 15 &&
+            age < 100 &&
             sex != SexOptions.undefined &&
-            weight > 0 &&
-            height > 0 &&
+            weight > 30 &&
+            weight < 250 &&
+            height > 100 &&
+            height < 230 &&
             activity != ActivityOptions.undefined &&
             currentBmi > 0 {
             isValid = true
