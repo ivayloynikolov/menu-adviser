@@ -47,7 +47,7 @@ struct ContentView: View {
                 .tabItem {
                     Image(systemName: "trophy.fill")
                         .resizable()
-                    Text("Home")
+                    Text("Progress")
                 }
         }
     }
