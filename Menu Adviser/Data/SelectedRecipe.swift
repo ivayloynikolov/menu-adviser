@@ -10,7 +10,6 @@ import SwiftUI
 @Observable
 class SelectedRecipe {
     var recipeData: RecipeResponseData?
-    //    var isRecipeSelected: Bool = false
     
     var isRecipeSelected: Binding<Bool> {
         Binding(

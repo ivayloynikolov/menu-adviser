@@ -1,19 +1,20 @@
 //
-//  UserView.swift
+//  GoalsDataView.swift
 //  Menu Adviser
 //
-//  Created by Ivailo Nikolov on 6.10.24.
+//  Created by Ivailo Nikolov on 20.10.24.
 //
 
 import SwiftUI
 import SwiftData
 
-struct UserDataView: View {
+struct GoalDataView: View {
     @Environment(\.modelContext) var modelContext
     
+    @Query var goals: [GoalModel]
     @Query var users: [UserModel]
     
-    @Binding var isEditUserActive: Bool
+    @Binding var isEditGoalsActive: Bool
     
     @State private var isEditAlertPresented = false
     @State private var isDeleteAlertPresented = false
@@ -21,74 +22,133 @@ struct UserDataView: View {
     
     var body: some View {
         VStack {
-            if !users.isEmpty {
-                Text("User data")
-                    .font(.title)
-                
-                Text(users.first!.name)
+            Text("Goal")
+                .font(.title)
+            
+            if goals.isEmpty {
+                Text("Please add goals data")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .bold()
-                    .font(.title)
-                    .padding(.top, 20)
-                
-                Text("(\(users.first!.age) years)")
-                    .font(.footnote)
-                
-                HStack {
-                    Text("Sex")
-                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
-                    
-                    Text(users.first!.sex)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 10)
-                
-                HStack {
-                    Text("Weight (kg.)")
-                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
-                    
-                    Text(String(format: "%.2f", users.first!.weight))
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 5)
-                
-                HStack {
-                    Text("Height (cm.)")
-                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
-                    
-                    Text("\(users.first!.height)")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 5)
-                
-                HStack {
-                    Text("Activity")
-                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
-                    
-                    Text(users.first!.activity)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 5)
-                
-                HStack {
-                    Text("Current BMI")
-                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
-                    
-                    Text(String(format: "%.2f", users.first!.currentBmi))
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                .padding(.top, 5)
                 
                 Spacer()
                 
                 Button(action: {
-                    isEditUserActive = true
+                    isEditGoalsActive = true
                 }, label: {
-                    Text("Edit User")
+                    Text("Add Goals")
+                        .foregroundStyle(.black)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 20.0)
+                })
+                .background(.green, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
+                .padding(.top, 30)
+                .padding(.bottom, 20)
+            } else {
+                HStack {
+                    Text(goals.first!.targetGoal)
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .font(.title)
+                }
+                .padding(.top, 5)
+                
+                Text("Weight (kg.)")
+                    .padding(.top, 10)
+                    .bold()
+                
+                HStack {
+                    Text("Current")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", users.first!.weight))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                HStack {
+                    Text("Target")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", goals.first!.targetWeight))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                Text("Daily Calories")
+                    .padding(.top, 10)
+                    .bold()
+                
+                HStack {
+                    Text("Current")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text("\(users.first!.currentDailyCalories)")
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                HStack {
+                    Text("Target")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text("\(goals.first!.targetCalories)")
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                Text("BMI")
+                    .padding(.top, 10)
+                    .bold()
+                
+                HStack {
+                    Text("Current")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", users.first!.currentBmi))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                HStack {
+                    Text("Target")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(String(format: "%.2f", goals.first!.targetBmi))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                Text("Physical Activity")
+                    .padding(.top, 10)
+                    .bold()
+                
+                HStack {
+                    Text("Current")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(users.first!.activity)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                HStack {
+                    Text("Target")
+                        .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
+                    
+                    Text(goals.first!.targetActivity)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                Text("Estimated Goals Achievement Days")
+                    .bold()
+                    .padding(.top, 40)
+                
+                Text("\(goals.first!.estimatedDays)")
+                    .font(.title2)
+                    .bold()
+                    .foregroundStyle(.green)
+                    .padding(.top, 5)
+                
+                Spacer()
+                
+                Button(action: {
+                    isEditGoalsActive = true
+                }, label: {
+                    Text("Edit Goals")
                         .foregroundStyle(.black)
                         .bold()
                         .frame(maxWidth: .infinity)
@@ -98,10 +158,10 @@ struct UserDataView: View {
                 .padding(.top, 30)
                 
                 Button(action: {
-                    appDataError = .deleteUserWarning
+                    appDataError = .deleteGoalWarning
                     isDeleteAlertPresented = true
                 }, label: {
-                    Text("Delete User")
+                    Text("Delete Goals")
                         .foregroundStyle(.black)
                         .bold()
                         .frame(maxWidth: .infinity)
@@ -125,9 +185,7 @@ struct UserDataView: View {
             
             Button("Delete", role: .destructive) {
                 do {
-                    try modelContext.delete(model: UserModel.self)
                     try modelContext.delete(model: GoalModel.self)
-                    try modelContext.delete(model: MenuPreferencesModel.self)
                     try modelContext.delete(model: DailyMenuModel.self)
                     try modelContext.save()
                     
@@ -148,6 +206,6 @@ struct UserDataView: View {
 
 #Preview {
     @Previewable @State var value: Bool = true
-    UserDataView(isEditUserActive: $value)
-        .modelContainer(for: UserModel.self, inMemory: true)
+    GoalDataView(isEditGoalsActive: $value)
+        .modelContainer(for: [GoalModel.self, UserModel.self], inMemory: true)
 }

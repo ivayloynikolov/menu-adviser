@@ -18,6 +18,18 @@ struct MenuPreferencesView: View {
     @State private var isVegetarian: Bool = false
     @State private var allergens: [AllergenData] = []
     
+    @State private var isAlertPresented = false
+    @State private var appDataError: AppDataError?
+    
+    func saveContext() {
+        do {
+            try modelContext.save()
+        } catch {
+            appDataError = .unsuccessfulSave
+            isAlertPresented = true
+        }
+    }
+    
     var body: some View {
         VStack {
             Text("Menu Preferences")
@@ -32,6 +44,8 @@ struct MenuPreferencesView: View {
                     
                     menuPreferences.first!.isVegan = isVegan
                     menuPreferences.first!.isVegetarian = isVegetarian
+                    
+                    saveContext()
                 }
             
             Toggle("Vegetarian menu", isOn: $isVegetarian)
@@ -43,6 +57,8 @@ struct MenuPreferencesView: View {
                     
                     menuPreferences.first!.isVegan = isVegan
                     menuPreferences.first!.isVegetarian = isVegetarian
+                    
+                    saveContext()
                 }
             
             Text("Allergens included in the recipes")
@@ -55,25 +71,30 @@ struct MenuPreferencesView: View {
             .padding(.horizontal, 0)
             .onChange(of: allergens) { oldValue, newValue in
                 menuPreferences.first!.allergens = allergens
+                
+                saveContext()
             }
+        }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
         }
         .task {
             if menuPreferences.isEmpty {
                 AppData.shared.getAllergens { allergensList in
                     if let data = allergensList {
                         allergens = data.allergens
+                        isVegan = false
+                        isVegetarian = false
                         
                         let preferences = MenuPreferencesModel(allergens: allergens, isVegan: isVegan, isVegetarian: isVegetarian)
                         
                         modelContext.insert(preferences)
                         
-                        do {
-                            try modelContext.save()
-                            
-                            print(menuPreferences.count)
-                        } catch {
-                            print(error)
-                        }
+                        saveContext()
                     }
                 }
             } else {

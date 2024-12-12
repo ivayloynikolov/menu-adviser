@@ -11,89 +11,163 @@ import SwiftData
 struct DailyMenuView: View {
     
     @Environment(\.modelContext) var modelContext
-    @Environment(\.selectedRecipe) var selectedRecipe
+    @Environment(\.networkMonitor) var networkMonitor
     
     @Query private var dailyMenus: [DailyMenuModel]
     @Query private var users: [UserModel]
-    @Query private var goals: [GoalsModel]
+    @Query private var goals: [GoalModel]
+    @Query private var preferences: [MenuPreferencesModel]
+    
+    @State private var isGeneratingInProgress: Bool = false
+    @State private var isEditAlertPresented: Bool = false
+    @State private var isNetworkAlertPresented: Bool = false
+    @State private var appDataError: AppDataError?
+    @State private var networkError: NetworkError?
     
     let currentDay: Int
     
-    init(currentDay: Int) {
-        self.currentDay = currentDay
-        _dailyMenus = Query(filter: #Predicate { $0.id == currentDay } )
+    var isEnabled: Bool {
+        return dailyMenus.count == currentDay - 1
     }
            
     var body: some View {
         VStack {
-            if dailyMenus.isEmpty {
-                Text("You don't have a menu generated for the day yet.")
-                    .multilineTextAlignment(.center)
-                
+            Text("Daily menu")
+                .bold()
+                .font(.title)
+                .frame(alignment: .center)
+                .padding(.top, 10)
+            
+            if isGeneratingInProgress {
                 Spacer()
                 
-                Button(action: {
-                    AppData.shared.generateDailyMenu(user: users.first!, goal: goals.first!) { response in
-                        if let menu = response {
-                            let dailyMenu = DailyMenuModel(
-                                id: currentDay,
-                                // breakfast, lunch, snack and dinner are confirmed as not nil in AppData
-                                breakfast: menu.breakfast!,
-                                lunch: menu.lunch!,
-                                snack: menu.snack!,
-                                dinner: menu.dinner!
-                            )
-                            
-                            modelContext.insert(dailyMenu)
-                        }
-                    }
-                }, label: {
-                    Text("Generate Daily Menu")
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15.0)
-                })
-                .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(0.7)
-                .padding(.bottom, 10)
+                ProgressView()
+                    .progressViewStyle(.circular)
+                
+                Text("Generating Daily Menu ...")
+                
+                Spacer()
             } else {
-                ScrollView(.vertical) {
-                    Text("Breakfast")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                if dailyMenus.count < currentDay {
+                    Text("There is no generated menu for this day yet.")
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 30)
                     
-                    RecipeMealRowView(recipeData: dailyMenus.first!.breakfast)
+                    Text("Daily menus can be generated only in a subsequent order.")
+                        .multilineTextAlignment(.center)
                     
-                    Divider()
+                    Spacer()
                     
-                    Text("Lunch")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus.first!.lunch)
-                    
-                    Divider()
-                    
-                    Text("Snack")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus.first!.snack)
-                    
-                    Divider()
-                    
-                    Text("Dinner")
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    RecipeMealRowView(recipeData: dailyMenus.first!.dinner)
-                        .padding(.bottom, 20)
+                    if isEnabled {
+                        Button(action: {
+                            if networkMonitor.isConnected {
+                                isGeneratingInProgress = true
+                                
+                                Task {
+                                    do {
+                                        let recipeDailyMenuData = try await AppData.shared.generateDailyMenu(
+                                            goal: goals.first!,
+                                            defaultDailyCalories: AppData.shared.calculateDefaultDailyCalories(
+                                                goals: goals,
+                                                dailyMenus: dailyMenus
+                                            ),
+                                            preferences: preferences.first!
+                                        )
+                                        
+                                        let dailyMenu = DailyMenuModel(
+                                            id: currentDay,
+                                            breakfast: recipeDailyMenuData.breakfast,
+                                            lunch: recipeDailyMenuData.lunch,
+                                            snack: recipeDailyMenuData.snack,
+                                            dinner: recipeDailyMenuData.dinner,
+                                            calculatedDailyCalories: AppData.shared.calculateDefaultDailyCalories(goals: goals, dailyMenus: dailyMenus)
+                                        )
+                                        
+                                        isGeneratingInProgress = false
+                                        
+                                        modelContext.insert(dailyMenu)
+                                        
+                                        do {
+                                            try modelContext.save()
+                                        } catch {
+                                            appDataError = .unsuccessfulSave
+                                            isEditAlertPresented = true
+                                        }
+                                    } catch let error as NetworkError {
+                                        networkError = error
+                                        isNetworkAlertPresented = true
+                                    }
+                                }
+                            } else {
+                                networkError = .noConnection
+                                isNetworkAlertPresented = true
+                            }
+                        }, label: {
+                            Text("Generate Daily Menu")
+                                .foregroundStyle(.black)
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 15.0)
+                        })
+                        .background(.orange, in: RoundedRectangle(cornerSize: CGSize(width: 5, height: 5))).opacity(isEnabled ? 0.7 : 0.2)
+                        .padding(.bottom, 10)
+                    }
+                } else {
+                    ScrollView(.vertical) {
+                        Text("Breakfast")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].breakfast)
+                        
+                        Divider()
+                        
+                        Text("Lunch")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].lunch)
+                        
+                        Divider()
+                        
+                        Text("Snack")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].snack)
+                        
+                        Divider()
+                        
+                        Text("Dinner")
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecipeMealRowView(recipeData: dailyMenus[currentDay - 1].dinner)
+                            .padding(.bottom, 20)
+                    }
                 }
             }
         }
+        .alert(Text(appDataError?.failureReason ?? ""), isPresented: $isEditAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isEditAlertPresented = false
+            }
+        } message: {
+            Text("\n\(appDataError?.recoverySuggestion ?? "") \n\n\(appDataError?.errorDescription ?? "")")
+        }
+        .alert(Text(networkError?.failureReason ?? ""), isPresented: $isNetworkAlertPresented) {
+            Button("Ok", role: .cancel) {
+                isNetworkAlertPresented = false
+                isGeneratingInProgress = false
+            }
+        } message: {
+            Text("\n\(networkError?.recoverySuggestion ?? "") \n\n\(networkError?.errorDescription ?? "")")
+        }
+        .padding(.horizontal, 30)
     }
 }
 
 #Preview {
     DailyMenuView(currentDay: 1)
-        .modelContainer(for: [GoalsModel.self, UserModel.self, DailyMenuModel.self], inMemory: true)
+        .modelContainer(for: [GoalModel.self, UserModel.self, DailyMenuModel.self, MenuPreferencesModel.self], inMemory: true)
 }
