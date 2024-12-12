@@ -1,39 +1,60 @@
 # menu-adviser
-App for healthy eating according to the specified goals
 
-The app is designed to assist individuals in enhancing their healthy habits. This goal can be achieved by providing daily and weekly menu suggestions that promote a more balanced and nutritious diet.
-Users will be able to add their personal data like weight, height, age, gender, etc. According to the desired goals, these numbers can be used for proper calculation of recommended daily calorie consumption.
-Based on these calculations, a public API will be used to get recipes that meet the conditions set.
+The Menu Adviser app is intended to help people achieve their goals related to being overweight or underweight or to support their current weight status.
 
-Base schema of the used screens. 
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/01_SplashScreen.png" width="20%" alt="Splash screen">
 
-![Basic schema](https://github.com/ivayloynikolov/menu-adviser/blob/checkpoint-1/resources/MenuAdviser_1.png)
+The first screen of the app onboards users on what they should do to take advantage of the provided app's functionalities.
+Other screens from the tab bar menu also depend on the entered personal data.
+<p float="left">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/02_UserOnboarding.png" width="20%" alt="User onboarding">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/03_GoalOnboarding.png" width="20%" alt="Goal onboarding">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/04_ProgressOnboarding.png" width="20%" alt="Progress onboarding">
+</p>
 
+ 
+In the user details screen, users can add their name, age, sex, current weight, height, and physical activity. The app will calculate their current body mass index.
 
-## More detailed description and views' hierarchy schema
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/04_UserDetails.png" width="20%" alt="User details">
 
-The user view shows the entered user's data. The rest of the properties will be used to calculate the current BMI value.
+The next screen allows users to enter their goals. It can be weight loss, weight gain, or keeping their current status. They can set their target activity, weight, and preferred pace for the transformation.
+The app will calculate the target daily intake of calories and target body mass index. A comparison between current and target daily calorie intake and current and target body mass index is shown on that screen.
+When all data is entered and the progress pace is selected, the app calculates the days needed to achieve set goals.
 
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/01_UserView.png" width="20%" alt="User view">
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/02_EditUserView.png" width="20%" alt="Edit user view">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/05_GoalDetails.png" width="20%" alt="Goal details">
 
-The goals view shows the set goal (currently one of three options) and target weight. The rest of the properties are calculated based on scheduled goals, and some of the user's property values.
+The next screen allows users to set their food preferences. They can mark if they are vegans or vegetarians as well as what allergens they want to be excluded from their daily menu.
 
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/03_GoalsView.png" width="20%" alt="Goals view">
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/04_EditGoalsView.png" width="20%" alt="Edit goals view">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/06_MenuPreferences.png" width="20%" alt="Menu preferences">
 
-The generate menu view allows users to specify their meal preferences and generates the daily menu based on those preferences and current set goals.
+The progress screen shows a scroll view with estimated days needed to achieve the set goal. Each day allows the user to calculate the daily menu, considering the target daily calories and nutrient distribution based on set goals.
+Daily menus can be generated subsequently, allowing the app to recalculate target daily calorie intake based on deviations from previous generated days.
+There is a graphical representation of the progress, which follows a weight change and BMI all the way to the end of the challenge.
+<p float="left">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/07_ProgressView.png" width="20%" alt="Progress view">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/07b_ProgressView.png" width="20%" alt="Progress view">
+</p>
 
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/05_GenerateMenuView.png" width="20%" alt="Generate menu view">
+Pressing the Generate Daily Menu button sends a request to a specially prepared backend proxy server, which interprets requested data and redirects the request to a widespread public API - fat secret. The received response is filtered according to the requested calorie and nutrient distribution data.
+The app receives a ready-for-use object, which is used to populate the scroll list with the summary of the dishes and the full details page on click.
+<p float="left">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/10_GenerateMenu.png" width="20%" alt="Generate menu">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/08b_ProgressView.png" width="20%" alt="Generate menu">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/11_RecipeDetails.png" width="20%" alt="Recipe details">
+</p>
 
-The daily menu view shows the currently generated menu according to the provided parameters.
+The app uses Swift Data to store user data, goals data, food preferences, and generated menus. The initial allergens are loaded from the included local JSON file and later transferred to the Swift Data model.
+AppStorage is used to store the last viewed page on application reload.
 
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/06_DailyMenuView.png" width="20%" alt="Daily menu view">
+User data and goals can be edited or deleted. These actions are followed by resetting other data, such as progress, goals, etc. Notifications prevent incident deletion of the data.
+<p float="left">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/12_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/13_UserDelete.png" width="20%" alt="Delete user">
+</p>
 
-The meal details view shows ingredients, macros, and directions for preparing the selected meal.
-
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/07_MealDetailsView.png" width="20%" alt="Meal details view">
-
-The progress view will show the current phase of the goals, including details for every day of the challenge.
-
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/08_ProgressView.png" width="20%" alt="Progress view">
+Error handling is also covered by different causes, which show alerts with appropriate information.
+There is also network reachability detection. If a lack of connection happens, the alert shows to inform the user about the interruption. When the connection is back, missing images are reloaded.
+<p float="left">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/12_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/dev/resources/13_UserDelete.png" width="20%" alt="Delete user">
+</p>
