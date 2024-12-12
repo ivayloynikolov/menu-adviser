@@ -55,6 +55,8 @@ User data and goals can be edited or deleted. These actions are followed by rese
 Error handling is also covered by different causes, which show alerts with appropriate information.
 There is also network reachability detection. If a lack of connection happens, the alert shows to inform the user about the interruption. When the connection is back, missing images are reloaded.
 <p float="left">
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/12_UserDelete.png" width="20%" alt="Delete user">
-<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/13_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/14_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/15_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/16_UserDelete.png" width="20%" alt="Delete user">
+<img src="https://github.com/ivayloynikolov/menu-adviser/blob/capstone-submission/resources/17_UserDelete.png" width="20%" alt="Delete user">
 </p>
