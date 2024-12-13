@@ -15,7 +15,7 @@ struct AllergenRowView: View {
     var body: some View {    
         HStack {
             Text(allergen.name)
-                .foregroundStyle(allergen.isSelected ? .black : .secondary)
+                .foregroundStyle(allergen.isSelected ? .primary : .secondary)
             
             Spacer()
             

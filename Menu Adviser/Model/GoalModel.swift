@@ -9,8 +9,8 @@ import Foundation
 import SwiftData
 
 @Model
-class GoalsModel: Identifiable {
-    var id: UUID
+class GoalModel: Identifiable {
+    var id: UUID = UUID()
     var targetGoal: String
     var targetWeight: Float
     var targetCalories: Int
@@ -19,8 +19,7 @@ class GoalsModel: Identifiable {
     var targetActivity: String
     var progressPace: String
     
-    init(id: UUID = UUID(), targetGoal: String, targetWeight: Float, targetCalories: Int, targetBmi: Float, estimatedDays: Int, targetActivity: String, progressPace: String) {
-        self.id = id
+    init(targetGoal: String, targetWeight: Float, targetCalories: Int, targetBmi: Float, estimatedDays: Int, targetActivity: String, progressPace: String) {
         self.targetGoal = targetGoal
         self.targetWeight = targetWeight
         self.targetCalories = targetCalories

@@ -15,6 +15,13 @@ struct ProgressBarView: View {
     let estimatedDays: Int
     let currentDay: Int
     
+    @State private var progressWidth: Double = 0.0
+    
+    var progressAnimation: Animation {
+            Animation
+            .easeInOut(duration: 0.5)
+        }
+    
     func calculateEstimatedValue() -> Float {
         var estimatedValue: Float = 0.0
         let dailyValueProgress = (targetValue - initialValue) / Float(estimatedDays)
@@ -26,7 +33,7 @@ struct ProgressBarView: View {
     
     func calculateProgressBarWidth(totalBarWidth: Double) -> Double {
         var progressBarWidth = 0.0
-        let progressPercent = (Double(estimatedDays) / 100.0) * Double(currentDay)
+        let progressPercent = (100.0 / Double(estimatedDays)) * Double(currentDay)
         
         progressBarWidth = (totalBarWidth / 100.0) * progressPercent
         
@@ -34,47 +41,50 @@ struct ProgressBarView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                HStack {
-                    Text(title)
-                        .frame(width: geometry.size.width * 0.2, height: 15.0, alignment: .leading)
+        VStack {
+            HStack {
+                Text(title)
+                    .frame(width: UIScreen.main.bounds.width * 0.2, height: 15.0, alignment: .leading)
+                
+                ZStack(alignment: .leading) {
+                    Color.gray
+                        .opacity(0.3)
+                        .cornerRadius(25)
+                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8 - 70.0, maxHeight: 10.0)
                     
-                    ZStack(alignment: .leading) {
-                        Color.gray
-                            .opacity(0.3)
-                            .cornerRadius(25)
-                            .frame(maxWidth: .infinity, maxHeight: 10.0)
-                        
-                        Color.green
-                            .opacity(0.8)
-                            .cornerRadius(25)
-                            .frame(width: calculateProgressBarWidth(totalBarWidth: geometry.size.width), height: 10.0)
-                    }
+                    Color.green
+                        .opacity(0.8)
+                        .cornerRadius(25)
+                        .frame(width: progressWidth, height: 10.0)
+                        .onChange(of: currentDay) {
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                progressWidth = calculateProgressBarWidth(totalBarWidth: UIScreen.main.bounds.width * 0.8 - 70.0)
+                            }
+                        }
                 }
+            }
+            
+            HStack {
+                Spacer()
                 
                 HStack {
+                    Text(String(format: "%.2f", initialValue))
+                        .font(.caption)
+                        .frame(height: 15.0, alignment: .leading)
+                    
                     Spacer()
                     
-                    HStack {
-                        Text(String(format: "%.2f", initialValue))
-                            .font(.caption)
-                            .frame(height: 15.0, alignment: .leading)
-                        
-                        Spacer()
-                        
-                        Text(String(format: "%.2f", calculateEstimatedValue()))
-                            .font(.caption)
-                            .frame(height: 15.0, alignment: .center)
-                        
-                        Spacer()
-                        
-                        Text(String(format: "%.2f", targetValue))
-                            .font(.caption)
-                            .frame(height: 15.0, alignment: .trailing)
-                    }
-                    .frame(width: geometry.size.width * 0.8, height: 15.0)
+                    Text(String(format: "%.2f", calculateEstimatedValue()))
+                        .font(.caption)
+                        .frame(height: 15.0, alignment: .center)
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.2f", targetValue))
+                        .font(.caption)
+                        .frame(height: 15.0, alignment: .trailing)
                 }
+                .frame(width: UIScreen.main.bounds.width * 0.8, height: 15.0)
             }
         }
     }

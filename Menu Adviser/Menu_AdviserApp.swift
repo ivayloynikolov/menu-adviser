@@ -14,7 +14,7 @@ struct Menu_AdviserApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [UserModel.self, GoalsModel.self, DailyMenuModel.self, MenuPreferencesModel.self])
+                .modelContainer(for: [UserModel.self, GoalModel.self, DailyMenuModel.self, MenuPreferencesModel.self])
         }
     }
 }

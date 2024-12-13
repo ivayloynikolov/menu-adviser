@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 class UserModel: Identifiable {
-    var id: UUID
+    var id: UUID = UUID()
     var name: String
     var age: Int
     var sex: String
@@ -63,8 +63,7 @@ class UserModel: Identifiable {
         return calories
     }
     
-    init(id: UUID = UUID(), name: String, age: Int, sex: String, weight: Float, height: Int, activity: String) {
-        self.id = id
+    init(name: String, age: Int, sex: String, weight: Float, height: Int, activity: String) {
         self.name = name
         self.age = age
         self.sex = sex
